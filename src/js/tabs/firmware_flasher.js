@@ -22,7 +22,7 @@ TABS.firmware_flasher.initialize = function (callback) {
 
         function parse_hex(str, callback) {
             // parsing hex in different thread
-            var worker = new Worker('./build/hex_parser.js');
+            var worker = new Worker('./js/workers/hex_parser.js');
 
             // "callback"
             worker.onmessage = function (event) {
@@ -186,54 +186,50 @@ TABS.firmware_flasher.initialize = function (callback) {
 
         // UI Hooks
         $('a.load_file').click(function () {
-            chrome.fileSystem.chooseEntry({type: 'openFile', accepts: [{extensions: ['hex']}]}, function (fileEntry) {
-                if (chrome.runtime.lastError) {
-                    console.error(chrome.runtime.lastError.message);
-
+            nwdialog.setContext(document);
+            nwdialog.openFileDialog(".hex", false, '', function(result) {
+                // hide github info (if it exists)
+                if (!result) {
+                    console.log('No file selected');
                     return;
                 }
-
-                // hide github info (if it exists)
                 $('div.git_info').slideUp();
-
-                chrome.fileSystem.getDisplayPath(fileEntry, function (path) {
-                    console.log('Loading file from: ' + path);
-
-                    fileEntry.file(function (file) {
-                        var reader = new FileReader();
-
-                        reader.onprogress = function (e) {
-                            if (e.total > 104857600) { // 100 MB
-                                // dont allow reading files bigger then 100 MB
-                                console.log('File limit (100 MB) exceeded, aborting');
-                                reader.abort();
-                            }
-                        };
-
-                        reader.onloadend = function(e) {
-                            if (e.total != 0 && e.total == e.loaded) {
-                                console.log('File loaded');
-
-                                intel_hex = e.target.result;
-
-                                parse_hex(intel_hex, function (data) {
-                                    parsed_hex = data;
-
-                                    if (parsed_hex) {
-                                        googleAnalytics.sendEvent('Flashing', 'Firmware', 'local');
-                                        $('a.flash_firmware').removeClass('disabled');
-
-                                        $('span.progressLabel').text('Loaded Local Firmware: (' + parsed_hex.bytes_total + ' bytes)');
-                                    } else {
-                                        $('span.progressLabel').text(chrome.i18n.getMessage('firmwareFlasherHexCorrupted'));
-                                    }
-                                });
-                            }
-                        };
-
-                        reader.readAsText(file);
-                    });
+                
+                var fs = require('fs');
+                var readableStream = fs.createReadStream(result);
+                var readData = '';
+                var length = 0;
+                
+                readableStream.on('data', function(chunk) {
+                    readData += chunk;
+                    length += chunk.length;                   
                 });
+                
+                readableStream.on('end', function() {
+                    if (length > 104857600) { // 100 MB
+                        // dont allow reading files bigger then 100 MB
+                        console.log('File limit (100 MB) exceeded, aborting');
+                        return;
+                    }
+                    
+                    if (length > 0) {
+                        intel_hex = readData;
+
+                        parse_hex(intel_hex, function (data) {
+                            parsed_hex = data;
+
+                            if (parsed_hex) {
+                                googleAnalytics.sendEvent('Flashing', 'Firmware', 'local');
+                                $('a.flash_firmware').removeClass('disabled');
+
+                                $('span.progressLabel').text('Loaded Local Firmware: (' + parsed_hex.bytes_total + ' bytes)');
+                            } else {
+                                $('span.progressLabel').text(chrome.i18n.getMessage('firmwareFlasherHexCorrupted'));
+                            }
+                        });
+                    }
+                });
+                            
             });
         });
 

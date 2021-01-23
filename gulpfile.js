@@ -1,8 +1,6 @@
 'use strict';
 
 const pkg = require('./package.json');
-// remove gulp-appdmg from the package.json we're going to write
-delete pkg.optionalDependencies['gulp-appdmg'];
 
 const child_process = require('child_process');
 const fs = require('fs');
@@ -20,28 +18,17 @@ const commandExistsSync = require('command-exists').sync;
 const targz = require('targz');
 
 const gulp = require('gulp');
-const rollup = require('rollup');
-const concat = require('gulp-concat');
 const yarn = require("gulp-yarn");
 const rename = require('gulp-rename');
-const replace = require('gulp-replace');
-const jeditor = require("gulp-json-editor");
-const xmlTransformer = require("gulp-xml-transformer");
 const os = require('os');
 const git = require('gulp-git');
 const source = require('vinyl-source-stream');
 const stream = require('stream');
 
-const cordova = require("cordova-lib").cordova;
-const browserify = require('browserify');
-const glob = require('glob');
-
 const DIST_DIR = './dist/';
 const APPS_DIR = './apps/';
 const DEBUG_DIR = './debug/';
 const RELEASE_DIR = './release/';
-const CORDOVA_DIR = './cordova/';
-const CORDOVA_DIST_DIR = './dist_cordova/';
 
 const LINUX_INSTALL_DIR = '/opt/iNav';
 
@@ -61,8 +48,6 @@ const nwBuilderOptions = {
 
 const nwArmVersion = '0.27.6';
 
-let cordovaDependencies = true;
-
 //-----------------
 //Pre tasks operations
 //-----------------
@@ -72,7 +57,7 @@ const SELECTED_PLATFORMS = getInputPlatforms();
 //Tasks
 //-----------------
 
-gulp.task('clean', gulp.parallel(clean_dist, clean_apps, clean_debug, clean_release, clean_cordova));
+gulp.task('clean', gulp.parallel(clean_dist, clean_apps, clean_debug, clean_release));
 
 gulp.task('clean-dist', clean_dist);
 
@@ -84,18 +69,16 @@ gulp.task('clean-release', clean_release);
 
 gulp.task('clean-cache', clean_cache);
 
-gulp.task('clean-cordova', clean_cordova);
-
 // Function definitions are processed before function calls.
 const getChangesetId = gulp.series(getHash, writeChangesetId);
 gulp.task('get-changeset-id', getChangesetId);
 
 // dist_yarn MUST be done after dist_src
-const distBuild = gulp.series(dist_src, dist_yarn, dist_locale, dist_libraries, dist_resources, dist_rollup, getChangesetId, gulp.series(cordova_dist()));
+const distBuild = gulp.series(dist_src, dist_yarn, dist_locale, dist_libraries, dist_resources, getChangesetId);
 const distRebuild = gulp.series(clean_dist, distBuild);
 gulp.task('dist', distRebuild);
 
-const appsBuild = gulp.series(gulp.parallel(clean_apps, distRebuild), apps, gulp.series(cordova_apps()), gulp.parallel(listPostBuildTasks(APPS_DIR)));
+const appsBuild = gulp.series(gulp.parallel(clean_apps, distRebuild), apps, gulp.parallel(listPostBuildTasks(APPS_DIR)));
 gulp.task('apps', appsBuild);
 
 const debugAppsBuild = gulp.series(gulp.parallel(clean_debug, distRebuild), debug, gulp.parallel(listPostBuildTasks(DEBUG_DIR)));
@@ -120,7 +103,7 @@ gulp.task('default', debugBuild);
 // # gulp <task> [<platform>]+        Run only for platform(s) (with <platform> one of --linux64, --linux32, --armv7, --osx64, --win32, --win64, or --android)
 // #
 function getInputPlatforms() {
-    const supportedPlatforms = ['linux64', 'linux32', 'armv7', 'osx64', 'win32', 'win64', 'android'];
+    const supportedPlatforms = ['linux64', 'linux32', 'armv7', 'osx64', 'win32', 'win64'];
     const platforms = [];
     const regEx = /--(\w+)/;
 
@@ -131,9 +114,6 @@ function getInputPlatforms() {
         } else if (arg === 'nowinicon') {
             console.log('ignoring winIco');
             delete nwBuilderOptions['winIco'];
-        } else if (arg === 'skipdep') {
-            console.log('ignoring cordova dependencies');
-            cordovaDependencies = false;
         } else {
             console.log(`Unknown platform: ${arg}`);
             process.exit();
@@ -298,55 +278,9 @@ function dist_resources() {
         .pipe(gulp.dest(DIST_DIR));
 }
 
-function dist_rollup() {
-    const commonjs = require('@rollup/plugin-commonjs');
-    const resolve = require('@rollup/plugin-node-resolve').default;
-    const alias = require('@rollup/plugin-alias');
-    const rollupReplace = require('@rollup/plugin-replace');
-
-    return rollup
-        .rollup({
-            input: {
-                // For any new file migrated to modules add the output path
-                // in dist on the left, on the right it's input file path.
-                // If all the things used by other files are importing
-                // it with `import/export` file doesn't have to be here.
-                // I will be picked up by rollup and bundled accordingly.
-                //'components/init': 'src/components/init.js',
-                'js/main_cordova': 'src/js/main_cordova.js',
-            },
-            plugins: [
-                /*alias({
-                    entries: {
-                        vue: require.resolve('vue/dist/vue.esm.js'),
-                    },
-                }),*/
-                rollupReplace({
-                    'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
-                }),
-                resolve(),
-                commonjs(),
-                //vue(),
-            ],
-        })
-        .then(bundle =>
-            bundle.write({
-                format: 'esm',
-                // rollup is smart about how `name` is treated.
-                // so `input` you create file like `components/init`
-                // `[name]` will be replaced with it creating directories
-                // accordingly inside of `dist`
-                entryFileNames: '[name].js',
-                dir: DIST_DIR,
-            })
-        );
-}
-
 // Create runable app directories in ./apps
 function apps(done) {
     const platforms = getPlatforms();
-    removeItem(platforms, 'android');
-
     buildNWAppsWrapper(platforms, 'normal', APPS_DIR, done);
 }
 
@@ -404,8 +338,6 @@ function post_build(arch, folder, done) {
 // Create debug app directories in ./debug
 function debug(done) {
     const platforms = getPlatforms();
-    removeItem(platforms, 'android');
-
     buildNWAppsWrapper(platforms, 'sdk', DEBUG_DIR, done);
 }
 
@@ -562,13 +494,9 @@ function start_debug(done) {
     const platforms = getPlatforms();
 
     if (platforms.length === 1) {
-        if (platforms[0] === 'android') {
-            cordova_debug();
-        } else {
-            const run = getRunDebugAppCommand(platforms[0]);
-            console.log(`Starting debug app (${run})...`);
-            child_process.exec(run);
-        }
+        const run = getRunDebugAppCommand(platforms[0]);
+        console.log(`Starting debug app (${run})...`);
+        child_process.exec(run);        
     } else {
         console.log('More than one platform specified, not starting debug app');
     }
@@ -818,188 +746,6 @@ function listReleaseTasks(appDirectory) {
             return release_win('win64', appDirectory, done);
         });
     }
-
-    if (platforms.indexOf('android') !== -1) {
-        releaseTasks.push(function release_android() {
-            return cordova_release();
-        });
-    }
-
+   
     return releaseTasks;
-}
-
-// Cordova
-function cordova_dist() {
-    const distTasks = [];
-    const platforms = getPlatforms();
-    if (platforms.indexOf('android') !== -1) {
-        distTasks.push(clean_cordova);
-        distTasks.push(cordova_copy_www);
-        distTasks.push(cordova_resources);
-        distTasks.push(cordova_include_www);
-        distTasks.push(cordova_copy_src);
-        distTasks.push(cordova_rename_src_config);
-        distTasks.push(cordova_rename_src_package);
-        distTasks.push(cordova_packagejson);
-        distTasks.push(cordova_configxml);
-        distTasks.push(cordova_browserify);
-        distTasks.push(cordova_depedencies);
-        if (cordovaDependencies) {
-            distTasks.push(cordova_platforms);
-        }
-    } else {
-        distTasks.push(function cordova_dist_none(done) {
-            done();
-        });
-    }
-    return distTasks;
-}
-function cordova_apps() {
-    const appsTasks = [];
-    const platforms = getPlatforms();
-    if (platforms.indexOf('android') !== -1) {
-        appsTasks.push(cordova_build);
-    } else {
-        appsTasks.push(function cordova_dist_none(done) {
-            done();
-        });
-    }
-    return appsTasks;
-}
-
-
-function clean_cordova() {
-    const patterns = [];
-    if (cordovaDependencies) {
-        patterns.push(`${CORDOVA_DIST_DIR}**`);
-    } else {
-        patterns.push(`${CORDOVA_DIST_DIR}www/**`);
-        patterns.push(`${CORDOVA_DIST_DIR}resources/**`);
-    }
-    return del(patterns, { force: true });
-}
-function cordova_copy_www() {
-    return gulp.src(`${DIST_DIR}**`, { base: DIST_DIR })
-        .pipe(gulp.dest(`${CORDOVA_DIST_DIR}www/`));
-}
-function cordova_resources() {
-    return gulp.src('assets/android/**')
-        .pipe(gulp.dest(`${CORDOVA_DIST_DIR}resources/android/`));
-}
-function cordova_include_www() {
-    return gulp.src(`${CORDOVA_DIST_DIR}www/main.html`)
-        .pipe(replace('<!-- CORDOVA_INCLUDE js/cordova_chromeapi.js -->', '<script type="text/javascript" src="./js/cordova_chromeapi.js"></script>'))
-        .pipe(replace('<!-- CORDOVA_INCLUDE js/cordova_startup.js -->', '<script type="text/javascript" src="./js/cordova_startup.js"></script>'))
-        .pipe(replace('<!-- CORDOVA_INCLUDE cordova.js -->', '<script type="text/javascript" src="cordova.js"></script>'))
-        .pipe(gulp.dest(`${CORDOVA_DIST_DIR}www`));
-}
-function cordova_copy_src() {
-    return gulp.src([`${CORDOVA_DIR}**`, `!${CORDOVA_DIR}config_template.xml`, `!${CORDOVA_DIR}package_template.json`])
-        .pipe(gulp.dest(`${CORDOVA_DIST_DIR}`));
-}
-function cordova_rename_src_config() {
-    return gulp.src(`${CORDOVA_DIR}config_template.xml`)
-        .pipe(rename('config.xml'))
-        .pipe(gulp.dest(`${CORDOVA_DIST_DIR}`));
-}
-function cordova_rename_src_package() {
-    return gulp.src(`${CORDOVA_DIR}package_template.json`)
-        .pipe(rename('package.json'))
-        .pipe(gulp.dest(`${CORDOVA_DIST_DIR}`));
-}
-function cordova_packagejson() {
-    return gulp.src(`${CORDOVA_DIST_DIR}package.json`)
-        .pipe(jeditor({
-            'name': pkg.name,
-            'description': pkg.description,
-            'version': pkg.version,
-            'author': pkg.author,
-            'license': pkg.license,
-        }))
-        .pipe(gulp.dest(CORDOVA_DIST_DIR));
-}
-function cordova_configxml() {
-    return gulp.src([`${CORDOVA_DIST_DIR}config.xml`])
-        .pipe(xmlTransformer([
-            { path: '//xmlns:name', text: pkg.productName },
-            { path: '//xmlns:description', text: pkg.description },
-            { path: '//xmlns:author', text: pkg.author },
-        ], 'http://www.w3.org/ns/widgets'))
-        .pipe(xmlTransformer([
-            { path: '.', attr: { 'version': pkg.version } },
-        ]))
-        .pipe(gulp.dest(CORDOVA_DIST_DIR));
-}
-function cordova_browserify(callback) {
-    const readFile = function(file) {
-        return new Promise(function(resolve) {
-            if (!file.includes("node_modules")) {
-                fs.readFile(file, 'utf8', async function (err,data) {
-                    if (data.match('require\\(.*\\)')) {
-                        await cordova_execbrowserify(file);
-                    }
-                    resolve();
-                });
-            } else {
-                resolve();
-            }
-        });
-    };
-    glob(`${CORDOVA_DIST_DIR}www/**/*.js`, {}, function (err, files) {
-        const readLoop = function() {
-            if (files.length === 0) {
-                callback();
-            } else {
-                const file = files.pop();
-                readFile(file).then(function() {
-                    readLoop();
-                });
-            }
-        };
-        readLoop();
-    });
-}
-function cordova_execbrowserify(file) {
-    const filename = file.split('/').pop();
-    const destpath = file.replace(filename, '');
-    console.log(`Include required modules in ${file}`);
-    return browserify(file, { ignoreMissing: true })
-        .bundle()
-        .pipe(source(filename))
-        .pipe(gulp.dest(destpath));
-}
-gulp.task('test', cordova_browserify);
-function cordova_depedencies() {
-    process.chdir('dist_cordova');
-    return gulp.src(['./package.json', './yarn.lock'])
-        .pipe(gulp.dest('./'))
-        .pipe(yarn({
-            production: true,
-        }));
-}
-function cordova_platforms() {
-    return cordova.platform('add', ['android']);
-}
-function cordova_debug() {
-    cordova.run();
-}
-function cordova_build(cb) {
-    cordova.build({
-        'platforms': ['android'],
-        'options': {
-            release: true,
-            buildConfig: 'build.json',
-        },
-    }).then(function() {
-        process.chdir('../');
-        cb();
-    });
-    console.log('APK will be generated at dist_cordova/platforms/android/app/build/outputs/apk/release/app-release.apk');
-}
-async function cordova_release() {
-    const filename = await getReleaseFilename('android', 'apk');
-    console.log(`Release APK : release/${filename}`);
-    return gulp.src(`${CORDOVA_DIST_DIR}platforms/android/app/build/outputs/apk/release/app-release.apk`)
-        .pipe(rename(filename))
-        .pipe(gulp.dest(RELEASE_DIR));
 }
