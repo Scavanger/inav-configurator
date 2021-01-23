@@ -103,6 +103,7 @@ TABS.calibration.initialize = function (callback) {
             $('[name=accGain' + item + ']').val(CALIBRATION_DATA.accGain[item]);
             $('[name=accZero' + item + ']').val(CALIBRATION_DATA.accZero[item]);
             $('[name=Mag' + item + ']').val(CALIBRATION_DATA.magZero[item]);
+            $('[name=MagGain' + item + ']').val(CALIBRATION_DATA.magGain[item]);
         });
         $('[name=OpflowScale]').val(CALIBRATION_DATA.opflow.Scale);
         updateCalibrationSteps();
@@ -199,27 +200,36 @@ TABS.calibration.initialize = function (callback) {
 
             $(button).addClass('disabled');
 
-            modalProcessing = new jBox('Modal', {
+            let modalProcessing = new jBox('Modal', {
                 width: 400,
                 height: 100,
                 animation: false,
                 closeOnClick: false,
                 closeOnEsc: false,
-                content: $('#modal-compass-processing')
+                content: $('#modal-compass-processing').clone()
             }).open();
 
             var countdown = 30;
             helper.interval.add('compass_calibration_interval', function () {
                 countdown--;
-                $('#modal-compass-countdown').text(countdown);
                 if (countdown === 0) {
-                    $(button).removeClass('disabled');
+                    setTimeout(function () {
+                        $(button).removeClass('disabled');
 
-                    modalProcessing.close();
-                    GUI.log(chrome.i18n.getMessage('initialSetupMagCalibEnded'));
-                    MSP.send_message(MSPCodes.MSP_CALIBRATION_DATA, false, false, updateSensorData);
-                    helper.interval.remove('compass_calibration_interval');
+                        modalProcessing.close();
+                        GUI.log(chrome.i18n.getMessage('initialSetupMagCalibEnded'));
+                        
+                        MSP.send_message(MSPCodes.MSP_CALIBRATION_DATA, false, false, updateSensorData);
+                        helper.interval.remove('compass_calibration_interval');
+
+                        //Cleanup
+                        delete modalProcessing;
+                        $('.jBox-wrapper').remove();
+                    }, 1000);
+                } else {
+                    modalProcessing.content.find('.modal-compass-countdown').text(countdown);
                 }
+
             }, 1000);
         });
 

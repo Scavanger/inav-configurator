@@ -1,18 +1,7 @@
 'use strict';
 
-var limitedFunctionalityTargets = [
-        "NAZE",
-        "CC3D",
-        "CJMCU",
-        "CRAZEPONYMINI",
-        "OLIMEXINO",
-        "RMDO",
-        "CC3D PPM1"
-];
-
 TABS.firmware_flasher = {};
 TABS.firmware_flasher.initialize = function (callback) {
-    var self = this;
 
     if (GUI.active_tab != 'firmware_flasher') {
         GUI.active_tab = 'firmware_flasher';
@@ -150,7 +139,7 @@ TABS.firmware_flasher.initialize = function (callback) {
             TABS.firmware_flasher.releases = releases;
         };
 
-        $.get('https://api.github.com/repos/iNavFlight/inav/releases', function (releasesData){
+        $.get('https://api.github.com/repos/iNavFlight/inav/releases?per_page=10', function (releasesData){
             TABS.firmware_flasher.releasesData = releasesData;
             buildBoardOptions();
 
@@ -159,14 +148,6 @@ TABS.firmware_flasher.initialize = function (callback) {
 
                 $("a.load_remote_file").addClass('disabled');
                 var target = $(this).val();
-
-                console.log(target, limitedFunctionalityTargets.indexOf(target));
-
-                if (limitedFunctionalityTargets.indexOf(target) >= 0) {
-                    $('.limited-functionality-warning').show();
-                } else {
-                    $('.limited-functionality-warning').hide();
-                }
 
                 if (!GUI.connect_lock) {
                     $('.progress').val(0).removeClass('valid invalid');
@@ -222,9 +203,9 @@ TABS.firmware_flasher.initialize = function (callback) {
                         var reader = new FileReader();
 
                         reader.onprogress = function (e) {
-                            if (e.total > 1048576) { // 1 MB
-                                // dont allow reading files bigger then 1 MB
-                                console.log('File limit (1 MB) exceeded, aborting');
+                            if (e.total > 104857600) { // 100 MB
+                                // dont allow reading files bigger then 100 MB
+                                console.log('File limit (100 MB) exceeded, aborting');
                                 reader.abort();
                             }
                         };

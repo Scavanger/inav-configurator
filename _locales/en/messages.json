@@ -37,6 +37,9 @@
     "deviceReady": {
         "message": "Device - <span style=\"color: #37a8db\">Ready</span>"
     },
+    "fcNotConnected": {
+        "message": "Not connected"
+    },
 
     "backupFileIncompatible": {
         "message": "Backup file provided was generated for previous version of the configurator and is incompatible with this version of configurator. Sorry"
@@ -55,7 +58,9 @@
     "configMigrationSuccessful": {
         "message": "Configuration migration complete, migrations applied: $1"
     },
-
+    "documentation": {
+        "message": "Documentation"
+    },
     "tabFirmwareFlasher": {
         "message": "Firmware Flasher"
     },
@@ -245,7 +250,7 @@
     },
 
     "defaultWelcomeText": {
-        "message": "The application supports all hardware that can run INAV (<a href=\"https://inavflight.com/shop/p/MATEKF405WING\" target=\"_blank\">Matek F405-WING</a>, <a href=\"https://inavflight.com/shop/p/MATEKF722SE\" target=\"_blank\">Matek F722-SE</a> and many other). The full list of recommended hardware is available <a href=\"https://github.com/iNavFlight/inav/wiki/Welcome-to-INAV,-useful-links-and-products\" target=\"_blank\">here</a>.<br /><br />The firmware source code can be downloaded from <a href=\"https://github.com/iNavFlight\" title=\"www.github.com\" target=\"_blank\">here</a><br />The newest binary firmware image is available <a href=\"https://github.com/iNavFlight/inav/releases\" title=\"www.github.com\" target=\"_blank\">here</a>.<br /><br />Latest <strong>CP210x Drivers</strong> can be downloaded from <a href=\"http://www.silabs.com/products/mcu/pages/usbtouartbridgevcpdrivers.aspx\" title=\"http://www.silabs.com\" target=\"_blank\">here</a><br />Latest <strong>STM USB VCP Drivers</strong> can be downloaded from <a href=\"http://www.st.com/web/en/catalog/tools/PF257938\" title=\"http://www.st.com\" target=\"_blank\">here</a><br />Latest <strong>Zadig</strong> for Windows DFU flashing can be downloaded from <a href=\"http://zadig.akeo.ie/\" title=\"http://zadig.akeo.ie\" target=\"_blank\">here</a><br />"
+        "message": "The application supports all hardware that can run INAV (<a href=\"https://inavflight.com/shop/p/MATEKF405WING\" target=\"_blank\">Matek F405-WING</a>, <a href=\"https://inavflight.com/shop/p/MATEKF722SE\" target=\"_blank\">Matek F722-SE</a> and many other). The full list of recommended hardware is available <a href=\"https://github.com/iNavFlight/inav/wiki/Welcome-to-INAV,-useful-links-and-products\" target=\"_blank\">here</a>.<br /><br />The firmware source code can be downloaded from <a href=\"https://github.com/iNavFlight\" title=\"www.github.com\" target=\"_blank\">here</a><br />The newest binary firmware image is available <a href=\"https://github.com/iNavFlight/inav/releases\" title=\"www.github.com\" target=\"_blank\">here</a>.<br /><br />Latest <strong>STM USB VCP Drivers</strong> can be downloaded from <a href=\"http://www.st.com/web/en/catalog/tools/PF257938\" title=\"http://www.st.com\" target=\"_blank\">here</a><br />Latest <strong>Zadig</strong> for Windows DFU flashing can be downloaded from <a href=\"http://zadig.akeo.ie/\" title=\"http://zadig.akeo.ie\" target=\"_blank\">here</a><br />"
     },
     "defaultContributingHead": {
         "message": "Contributing"
@@ -505,7 +510,7 @@
         "message": "In-flight level calibration"
     },
     "featureMOTOR_STOP": {
-        "message": "Don't spin the motors when armed"
+        "message": "Stop motors on low throttle"
     },
     "featureSERVO_TILT": {
         "message": "Servo gimbal"
@@ -546,8 +551,8 @@
     "featureCURRENT_METER": {
         "message": "Battery current monitoring"
     },
-    "feature3D": {
-        "message": "3D mode (for use with reversible ESCs)"
+    "featureREVERSIBLE_MOTORS": {
+        "message": "Reversible motors mode (for use with reversible ESCs)"
     },
     "featureRSSI_ADC": {
         "message": "Analog RSSI input"
@@ -636,11 +641,17 @@
     "configurationEscFeatures": {
         "message": "ESC/Motor Features"
     },
+    "serialrx_inverted": {
+        "message": "Serial Port Inverted (comparing to protocol default)"
+    },
+    "serialrx_halfduplex" : {
+        "message": "Serial receiver half-duplex"
+    },
     "configurationFeaturesHelp": {
         "message": "<strong>Note:</strong> Not all combinations of features are valid.  When the flight controller firmware detects invalid feature combinations conflicting features will be disabled.<br /><strong>Note:</strong> Configure serial ports <span style=\"color: red\">before</span> enabling the features that will use the ports."
     },
     "configurationSerialRXHelp": {
-        "message": "<strong>Note:</strong> Remember to configure a Serial Port (via Ports tab) and choose a Serial Receiver Provider when using RX_SERIAL feature."
+        "message": "<strong>Note:</strong> Remember to configure a Serial Port (via Ports tab) for the serial receiver"
     },
     "configurationBoardAlignment": {
         "message": "Board and Sensor Alignment"
@@ -687,8 +698,8 @@
     "configurationThrottleMinimumCommand": {
         "message": "Minimum Command"
     },
-    "configurationBatteryVoltage": {
-        "message": "Battery Voltage"
+    "configurationVoltageCurrentSensor": {
+        "message": "Voltage and Current Sensors"
     },
     "configurationBatteryCurrent": {
         "message": "Battery Current"
@@ -723,10 +734,13 @@
     "configurationBatteryScale": {
         "message": "Voltage Scale"
     },
-    "configurationCurrent": {
-        "message": "Current Sensor"
+    "configurationBatteryVoltage": {
+        "message": "Battery Voltage"
     },
     "configurationCurrentScale": {
+        "message": "Current Meter Scale"
+    },
+    "configurationCurrentScaleHelp": {
         "message": "Scale the output voltage to milliamps [1/10th mV/A]"
     },
     "configurationCurrentOffset": {
@@ -735,8 +749,11 @@
     "configurationBatteryMultiwiiCurrent": {
         "message": "Enable support for legacy Multiwii MSP current output"
     },
-    "configurationBatteryCapacity": {
-        "message": "Battery Capacity"
+    "configurationBatterySettings": {
+        "message": "Battery Settings"
+    },
+    "configurationBatterySettingsHelp": {
+        "message": "These settings apply to the currently selected battery profile "
     },
     "configurationBatteryCapacityValue": {
         "message": "Capacity"
@@ -750,20 +767,101 @@
     "configurationBatteryCapacityUnit": {
         "message": "Battery Capacity Unit"
     },
+    "configurationLaunch": {
+        "message": "Fixed Wing Auto Launch Settings"
+    },
+    "configurationLaunchVelocity": {
+        "message": "Threshold Velocity [cm/s]"
+    },
+    "configurationLaunchVelocityHelp": {
+        "message": "Forward velocity threshold for swing-launch detection [cm/s]"
+    },
+    "configurationLaunchAccel": {
+        "message": "Threshold Acceleration [cm/s/s]"
+    },
+    "configurationLaunchAccelHelp": {
+        "message": "Forward acceleration threshold for bungee launch of throw launch [cm/s/s], 1G = 981 cm/s/s"
+    },
+    "configurationLaunchMaxAngle": {
+        "message": "Max Throw Angle [&deg;]"
+    },
+    "configurationLaunchMaxAngleHelp": {
+        "message": "Max throw angle (pitch/roll combined) to consider launch successful. Set to 180 to disable completely [deg]"
+    },
+    "configurationLaunchDetectTime": {
+        "message": "Detect Time [ms]"
+    },
+    "configurationLaunchDetectTimeHelp": {
+        "message": "Time for which thresholds have to breached to consider launch happened [ms]"
+    },
+    "configurationLaunchThr": {
+        "message": "Launch Throttle [uS]"
+    },
+    "configurationLaunchThrHelp": {
+        "message": "Launch throttle - throttle to be set during launch sequence (pwm units)"
+    },
+    "configurationLaunchIdleThr": {
+        "message": "Idle Throttle [uS]"
+    },
+    "configurationLaunchIdleThrHelp": {
+        "message": "Idle throttle - throttle to be set before launch sequence is initiated. If set below minimum throttle it will force motor stop or at idle throttle (depending if the MOTOR_STOP is enabled). If set above minimum throttle it will force throttle to this value (if MOTOR_STOP is enabled it will be handled according to throttle stick position)"
+    },
+    "configurationLaunchMotorDelay": {
+        "message": "Motor Delay [ms]"
+    },
+    "configurationLaunchMotorDelayHelp": {
+        "message": "Delay between detected launch and launch sequence start and throttling up (ms)"
+    },
+    "configurationLaunchSpinupTime": {
+        "message": "Motor Spinup Time [ms]"
+    },
+    "configurationLaunchSpinupTimeHelp": {
+        "message": "Time to bring power from minimum throttle to nav_fw_launch_thr - to avoid big stress on ESC and large torque from propeller"
+    },
+    "configurationLaunchMinTime": {
+        "message": "Minimum Launch Time [ms]"
+    },
+    "configurationLaunchMinTimeHelp": {
+        "message": "Allow launch mode to execute at least this time (ms) and ignore stick movements [0-60000]."
+    },
+    "configurationLaunchTimeout": {
+        "message": "Launch Timeout [ms]"
+    },
+    "configurationLaunchTimeoutHelp": {
+        "message": "Maximum time for launch sequence to be executed. After this time LAUNCH mode will be turned off and regular flight mode will take over (ms)"
+    },
+    "configurationLaunchEndTime": {
+        "message": "End Transition Time [ms]"
+    },
+    "configurationLaunchEndTimeHelp": {
+        "message": "Smooth transition time at the end of the launch (ms). Default: 2000 [0-5000]. This is added to the Launch Timeout."
+    },
+    "configurationLaunchMaxAltitude": {
+        "message": "Maximum Altitude [cm]"
+    },
+    "configurationLaunchMaxAltitudeHelp": {
+        "message": "Altitude at which LAUNCH mode will be turned off and regular flight mode will take over. [cm]"
+    },
+    "configurationLaunchClimbAngle": {
+        "message": "Climb Angle [&deg;]"
+    },
+    "configurationLaunchClimbAngleHelp": {
+        "message": "Climb angle for launch sequence (degrees), is also restrained by global max_angle_inclination_pit"
+    },
     "configuration3d": {
-        "message": "3D"
+        "message": "Reversible motors"
     },
     "configuration3dDeadbandLow": {
-        "message": "3D Deadband Low"
+        "message": "Reversible Motors Deadband Low"
     },
     "configuration3dDeadbandHigh": {
-        "message": "3D Deadband High"
+        "message": "Reversible Motors Deadband High"
     },
     "configuration3dNeutral": {
-        "message": "3D Neutral"
+        "message": "Reversible Motors Neutral"
     },
     "configuration3dDeadbandThrottle": {
-        "message": "3D Deadband Throttle"
+        "message": "Reversible Motors Deadband Throttle"
     },
     "configurationSystem": {
         "message": "System configuration"
@@ -780,6 +878,21 @@
     "configurationGPSProtocol": {
         "message": "Protocol"
     },
+     "configurationGPSUseGalileo": {
+        "message": "Gps use Galileo Satellites"
+    },
+    "tzOffset": {
+        "message": "Timezone Offset [Mins]"
+    },
+    "tzOffsetHelp": {
+        "message": "Time zone offset from UTC, in minutes. This is applied to the GPS time for logging and time-stamping of Blackbox logs. (Default = 0)"
+    },
+    "tzAutomaticDST": {
+        "message": "Automatic Daylight Savings Time"
+    },
+    "tzAutomaticDSTHelp": {
+        "message": "Automatically add Daylight Saving Time to the GPS time when needed or simply ignore it. Includes presets for EU and the USA - if you live outside these areas it is suggested to manage DST manually via tz_offset. (Default = Off)"
+    },
     "configurationGPSBaudrate": {
         "message": "Baudrate"
     },
@@ -788,6 +901,9 @@
     },
     "configurationGPSHelp": {
         "message": "<strong>Note:</strong> Remember to configure a Serial Port (via Ports tab) when using GPS feature."
+    },
+    "receiverType": {
+        "message": "Receiver type"
     },
     "configurationSerialRX": {
         "message": "Serial Receiver Provider"
@@ -900,6 +1016,9 @@
     "portsFunction_TELEMETRY_SMARTPORT": {
         "message": "SmartPort"
     },
+    "portsFunction_SMARTPORT_MASTER": {
+        "message": "SmartPort Master"
+    },
     "portsFunction_RX_SERIAL": {
         "message": "Serial RX"
     },
@@ -939,11 +1058,8 @@
     "pidTuningFeedForward": {
         "message": "FeedForward"
     },
-    "dtermSetpointWeight": {
-        "message": "Dterm setpoint weight"
-    },
-    "dtermSetpointWeightHelp": {
-        "message": "The lower the value, the more damped all the maneuvers are. 0 mean Dterm is computed from gyro, 1 from error and 2 from setpoint. For gentler feel lower the value. For sharper response, raise it"
+    "pidTuningControlDerivative": {
+        "message": "Control Derivative"
     },
     "pidTuningRollPitchRate": {
         "message": "ROLL &amp; PITCH rate"
@@ -1168,7 +1284,7 @@
         "message": "Pitch & Roll I Adjustment"
     },
     "adjustmentsFunction8": {
-        "message": "Pitch & Roll D Adjustment"
+        "message": "Pitch & Roll D/FF Adjustment"
     },
     "adjustmentsFunction9": {
         "message": "Yaw P Adjustment"
@@ -1177,7 +1293,7 @@
         "message": "Yaw I Adjustment"
     },
     "adjustmentsFunction11": {
-        "message": "Yaw D Adjustment"
+        "message": "Yaw D/FF Adjustment"
     },
     "adjustmentsFunction12": {
         "message": "Rate Profile Selection"
@@ -1195,7 +1311,7 @@
         "message": "Pitch I Adjustment"
     },
     "adjustmentsFunction17": {
-        "message": "Pitch D Adjustment"
+        "message": "Pitch D/FF Adjustment"
     },
     "adjustmentsFunction18": {
         "message": "Roll P Adjustment"
@@ -1204,7 +1320,7 @@
         "message": "Roll I Adjustment"
     },
     "adjustmentsFunction20": {
-        "message": "Roll D Adjustment"
+        "message": "Roll D/FF Adjustment"
     },
     "adjustmentsFunction21": {
         "message": "RC Yaw Expo Adjustment"
@@ -1293,6 +1409,15 @@
     "adjustmentsFunction49": {
         "message": "VTX power level Adjustment"
     },
+    "adjustmentsFunction50": {
+        "message": "Thrust PID Attenuation (TPA) Adjustment"
+    },
+    "adjustmentsFunction51": {
+        "message": "TPA Breakpoint Adjustment"
+    },
+    "adjustmentsFunction52": {
+        "message": "Control Smoothness Adjustment"
+    },
     "adjustmentsSave": {
         "message": "Save"
     },
@@ -1368,6 +1493,12 @@
     },
     "mixerSaved": {
         "message": "Mixer <span style=\"color: #37a8db\">saved</span>"
+    },
+    "mixerWizard": {
+        "message": "Mixer wizard"
+    },
+    "mixerWizardInfo": {
+        "message":"<ol><li>Remove propellers</li><li>Connect LiPo and use Outputs Tab to test all motors</li><li>Note the position of each motor (motor #1 - Left Top and so on)</li><li>Fill the table below</li></ol>"
     },
     "gpsHead": {
         "message": "GPS"
@@ -1779,16 +1910,16 @@
     },
 
     "controlAxisRoll": {
-        "message": "Roll"
+        "message": "Roll [A]"
     },
     "controlAxisPitch": {
-        "message": "Pitch"
+        "message": "Pitch [E]"
     },
     "controlAxisYaw": {
-        "message": "Yaw"
+        "message": "Yaw [R]"
     },
     "controlAxisThrottle": {
-        "message": "Throttle"
+        "message": "Throttle [T]"
     },
     "radioChannelShort": {
         "message": "CH "
@@ -1936,9 +2067,6 @@
     },
     "warning": {
         "message": "Warning"
-    },
-    "boardLimitedFunctionality": {
-        "message": "Due to limited flash size, the board you have selected will have limited functionality, not all functions and features will be available. Hardware support map is available on <a href=\"https://github.com/iNavFlight/inav/wiki/Hardware-support-map\" target=\"_blank\">INAV Wiki pages</a>"
     },
     "escProtocol": {
         "message": "ESC protocol"
@@ -2199,7 +2327,7 @@
         "message": "Warning"
     },
     "presetApplyDescription": {
-        "message": "Preset overwrites selected configuration values including mixer, filtering, PIDs and other. Settings like: flight modes, radio settings, failsafe and OSD are not changed. Applied values should <strong>NOT</strong> treated as final values, but entry points for final tuning. <br> Always check new configuration before flying!"
+        "message": "<p style='color: darkred;'>Make sure that <strong>mixer</strong> was configured before applying any Presets!</p><p>Preset overwrites selected configuration values including mixer, filtering, PIDs and other. Settings like: flight modes, radio settings, failsafe and OSD are not changed. Applied values should <strong>NOT</strong> treated as final values, but entry points for final tuning. <br> Always check new configuration before flying!</p>"
     },
     "OK": {
         "message": "OK"
@@ -2218,6 +2346,9 @@
     },
     "accCalibrationProcessing": {
         "message": "Processing..."
+    },
+    "tabProgramming": {
+        "message": "Programming"
     },
     "tabAdvancedTuning": {
         "message": "Advanced tuning"
@@ -2321,12 +2452,6 @@
     "gps_min_sats": {
         "message": "Min. GPS satellites for a valid fix"
     },
-    "use_gps_velned": {
-        "message": "Use GPS data for velocity calculation"
-    },
-    "use_gps_velned_help": {
-        "message": "Defined if iNav should use velocity data provided by GPS module for doing position and speed estimation. If set to OFF iNav will fallback to calculating velocity from GPS coordinates. Using native velocity data may improve performance on some GPS modules. Some GPS modules introduce significant delay and using native velocity may actually result in much worse performance."
-    },
     "w_z_baro_p_help": {
         "message": "When this value is set to <strong>0</strong>, barometer is not used for altitude computation"
     },
@@ -2372,6 +2497,12 @@
     "rthAltitudeHelp": {
         "message": "Used in Extra, Fixed and 'At Least' RTH altitude modes"
     },
+    "rthHomeAltitudeLabel": {
+        "message": "RTH Home altitude [cm]"
+    },
+    "rthHomeAltitudeHelp": {
+        "message": "Used when not landing at the home point. Upon arriving at home, the plane will loiter and change altitude to the RTH Home Altitude. Default is 0, which is feature disabled."
+    },
     "landDescentRate": {
         "message": "Landing vertical speed [cm/s]"
     },
@@ -2386,6 +2517,18 @@
     },
     "cruiseThrottle": {
         "message": "Cruise throttle"
+    },
+    "cruiseYawRateLabel": {
+        "message": "Cruise Yaw Rate"
+    },
+    "cruiseYawRateHelp": {
+        "message": "This is the turning rate in Cruise and 3D Cruise."
+    },
+    "cruiseManualThrottleLabel": {
+        "message": "Allow manual throttle increase"
+    },
+    "cruiseManualThrottleHelp": {
+        "message": "Turning this on, will allow you to override automatic throttle control in all navigation modes. You cannot go below the automatic throttle value, except with motor stop on zero throttle."
     },
     "minThrottle": {
         "message": "Min. throttle"
@@ -2417,8 +2560,47 @@
     "pitchToThrottleHelp": {
         "message": "In navigation modes, each degree of climb will add this many units to the cruise throttle. Conversely, each degree of diving will substract from it."
     },
+    "pitchToThrottleSmoothing": {
+        "message": "Throttle smoothing"
+    },
+    "pitchToThrottleSmoothingHelp": {
+        "message": "How smoothly the autopilot adjusts the throttle level in response to pitch angle changes [0-9]."
+    },
+    "pitchToThrottleThreshold": {
+        "message": "Instantaneous throttle adjustment threshold [centidegrees]"
+    },
+    "pitchToThrottleThresholdHelp": {
+        "message": "The autopilot will instantly adjust the throttle level without smoothing according to pitch to throttle if the pitch angle is more this many centidegrees from the filtered value."
+    },
     "loiterRadius": {
         "message": "Loiter radius [cm]"
+    },
+    "loiterDirectionLabel": {
+        "message": "Loiter direction"
+    },
+    "loiterDirectionHelp": {
+        "message": "This setting allows you to choose the loiter direction. Selecting YAW allows you to change the loiter direction with the yaw stick."
+    },
+     "controlSmoothness": {
+        "message": "Control Smoothness"
+    },
+     "controlSmoothnessHelp": {
+        "message": "How smoothly the autopilot controls the airplane to correct the navigation error [0-9]."
+    },
+    "waypointConfiguration": {
+        "message": "Waypoint Navigation Settings"
+    },
+    "waypointRadius": {
+        "message": "Waypoint radius [cm]"
+    },
+    "waypointRadiusHelp": {
+        "message": "This sets the distance away from a waypoint that triggers the waypoint as reached."
+    },
+    "waypointSafeDistance": {
+        "message": "Waypoint safe distance [cm]."
+    },
+    "waypointSafeDistanceHelp": {
+        "message": "The maximum distance between the home point and the first waypoint."
     },
     "fixedWingNavigationConfiguration": {
       "message": "Fixed Wing Navigation Settings"
@@ -2441,8 +2623,8 @@
     "osdUnitUKTip": {
         "message": "Use metric units except for the speed, which is displayed in miles per hour."
     },
-    "osdAlarmRSSI": {
-        "message": "RSSI"
+    "osd_rssi_alarm": {
+        "message": "RSSI (%)"
     },
     "osdAlarmBATT_CAP": {
         "message": "Used Battery"
@@ -2450,71 +2632,77 @@
     "osdAlarmBATT_CAP_HELP": {
         "message": "The battery capacity used indicator (mah drawn) will flash when the total consumed mah are greater than this value. Requires a current sensor. Zero disables this alarm."
     },
-    "osdAlarmFLY_MINUTES": {
-        "message": "Fly Time"
+    "osd_time_alarm": {
+        "message": "Fly Time (minutes)"
     },
-    "osdAlarmMAX_ALTITUDE": {
-        "message": "Altitude"
+    "osd_alt_alarm": {
+        "message": "Altitude (meters)"
     },
-    "osdAlarmDIST": {
-        "message": "Distance"
+    "osd_dist_alarm": {
+        "message": "Distance (meters)"
     },
     "osdAlarmDIST_HELP": {
         "message": "The distance to home indicator will flash when the distance is greater than this value. Zero disables this alarm."
     },
-    "osdAlarmMAX_NEG_ALTITUDE": {
-        "message": "Negative Altitude"
+    "osd_neg_alt_alarm": {
+        "message": "Negative Altitude (meters)"
     },
     "osdAlarmMAX_NEG_ALTITUDE_HELP": {
         "message": "The altitude indicator will flash when altitude is negative and its absolute value is greater than this alarm. Useful when taking off from elevated places. Zero disables this alarm."
     },
-    "osdAlarmGFORCE": {
+    "osd_gforce_alarm": {
         "message": "g force"
     },
     "osdAlarmGFORCE_HELP": {
         "message": "The g force element will start blinking when greater than this value"
     },
-    "osdAlarmGFORCE_AXIS_MIN": {
+    "osd_gforce_axis_alarm_min": {
         "message": "g force axis min"
     },
     "osdAlarmGFORCE_AXIS_MIN_HELP": {
         "message": "The axes g force elements will start blinking when lower than this value"
     },
-    "osdAlarmGFORCE_AXIS_MAX": {
+    "osd_gforce_axis_alarm_max": {
         "message": "g force axis max"
     },
     "osdAlarmGFORCE_AXIS_MAX_HELP": {
         "message": "The axes g force elements will start blinking when greater than this value"
     },
-    "osdAlarmCURRENT": {
-        "message": "Current"
+    "osd_current_alarm": {
+        "message": "Current (A)"
     },
     "osdAlarmCURRENT_HELP": {
         "message": "The current draw element will start blinking when the consumption is greater than this value. Zero disables this alarm."
     },
-    "osdAlarmIMU_TEMPERATURE_MIN": {
+    "osd_imu_temp_alarm_min": {
         "message": "Minimum IMU temperature"
     },
-    "osdAlarmIMU_TEMPERATURE_MIN_HELP": {
-        "message": "The temperature indicator will flash when the IMU temperature is bellow this value"
-    },
-    "osdAlarmIMU_TEMPERATURE_MAX": {
+    "osd_imu_temp_alarm_max": {
         "message": "Maximum IMU temperature"
     },
-    "osdAlarmIMU_TEMPERATURE_MAX_HELP": {
-        "message": "The temperature indicator will flash when the IMU temperature is above this value"
-    },
-    "osdAlarmBARO_TEMPERATURE_MIN": {
+    "osd_baro_temp_alarm_min": {
         "message": "Minimum baro temperature"
     },
-    "osdAlarmBARO_TEMPERATURE_MIN_HELP": {
-        "message": "The temperature indicator will flash when the barometer temperature is bellow this value"
-    },
-    "osdAlarmBARO_TEMPERATURE_MAX": {
+    "osd_baro_temp_alarm_max": {
         "message": "Maximum baro temperature"
     },
-    "osdAlarmBARO_TEMPERATURE_MAX_HELP": {
-        "message": "The temperature indicator will flash when the barometer temperature is above this value"
+    "osd_esc_temp_alarm_min": {
+        "message": "Minimum ESC temperature"
+    },
+    "osd_esc_temp_alarm_max": {
+        "message": "Maximum ESC temperature"
+    },
+    "osd_snr_alarm": {
+        "message": "Crossfire SNR Alarm Level"
+    },
+    "osdalarmSNR_HELP": {
+        "message": "SNR is only shown below this value. 0dB (1:1 ratio), indicates that received signal equals noise floor."
+    },
+    "osd_link_quality_alarm": {
+        "message": "Crossfire Link Quality Alarm"
+    },
+    "osdalarmLQ_HELP": {
+        "message": "For Crossfire use 70%. For Tracer use 50%."
     },
     "osdGroupGeneral": {
         "message": "General"
@@ -2548,6 +2736,9 @@
     },
     "osdGroupVTX": {
         "message": "VTX"
+    },
+    "osdGroupCRSF": {
+        "message": "CRSF RX Statistics"
     },
     "osdGroupMapsAndRadars": {
         "message": "Maps and Radars"
@@ -2654,6 +2845,12 @@
     "osdElement_PLUS_CODE_HELP": {
         "message": "Plus codes encode both latitude and longitude on a single value that can be entered directly in Google Maps. It provides the same level of precision than latitude and longitude while using less screen space."
     },
+    "osdElement_AZIMUTH": {
+        "message": "Azimuth"
+    },
+    "osdElement_AZIMUTH_HELP": {
+        "message": "Azimuth is the direction of the aircraft in relation to the home point. It's useful to keep the aircraft on the correct course or to keep the aircraft in front of a fixed directional antenna."
+    },
     "osdElement_TRIP_DIST": {
         "message": "Trip distance"
     },
@@ -2728,6 +2925,24 @@
     },
     "osdElement_VTX_CHANNEL_HELP": {
         "message": "Shows the current band and channel of the VTX. Requires either a VTX with SmartAudio or Tramp or either a VTX integrated in the flight controller."
+    },
+    "osdElement_CRSF_RSSI_DBM": {
+        "message": "RX RSSI in dBm"
+    },
+    "osdElement_CRSF_LQ": {
+        "message": "RX Link Quality %"
+    },
+    "osdElement_CRSF_LQ_HELP": {
+        "message": "Use Crossfire LQ Format setting to select format type."
+    },
+    "osdElement_CRSF_SNR_DB": {
+        "message": "RX Uplink SNR in dB"
+    },
+    "osdElement_CRSF_SNR_DB_HELP": {
+        "message": "Shown only when SNR goes below alarm level. At 0dB, received signal level equals noise floor level."
+    },
+    "osdElement_CRSF_TX_POWER": {
+        "message": "TX power in mW"
     },
     "osdElement_MAP_NORTH": {
         "message": "Map (Up is north)"
@@ -2807,6 +3022,27 @@
     "osdElement_BARO_TEMPERATURE_HELP": {
         "message": "Temperature of the barometer"
     },
+    "osdElement_ESC_TEMPERATURE": {
+        "message": "ESC Temperature"
+    },
+    "osdElement_ESC_TEMPERATURE_HELP": {
+        "message": "Temperature of the ESC read from DSHOT telemetry"
+    },
+    "osdGroupGVars": {
+        "message": "Global Variables"
+    },
+    "osdElement_GVAR_0": {
+        "message": "Global Variable 0"
+    },
+    "osdElement_GVAR_1": {
+        "message": "Global Variable 1"
+    },
+    "osdElement_GVAR_2": {
+        "message": "Global Variable 2"
+    },
+    "osdElement_GVAR_3": {
+        "message": "Global Variable 3"
+    },
     "osdElement_SENSOR1_TEMPERATURE": {
         "message": "Temperature sensor 1"
     },
@@ -2833,6 +3069,15 @@
     },
     "osdSettingMainVoltageDecimals": {
         "message": "Main voltage decimals"
+    },
+    "osdSettingPLUS_CODE_DIGITS_HELP": {
+        "message": "Precision at the equator: 10=13.9x13.9m; 11=2.8x3.5m; 12=56x87cm; 13=11x22cm."
+    }, 
+    "osdSettingPLUS_CODE_SHORT_HELP": {
+        "message": "Removing 2, 4 and 6 leading digits requires a reference location within, respectively, ~800km, ~40km and ~2km to recover the original coordinates."
+    },
+    "osdSettingCRSF_LQ_FORMAT_HELP": {
+        "message": "TYPE1 shows LQ% as used by TBS hardware. TYPE2 shows RF Profile Modes (2=150Hz, 1=50Hz, 0=4Hz update rates) and LQ % [0..100%]. Tracer shows RFMode 1 (1=250Hz) and LQ % [0..100%]."
     },
     "uploadingCharacters": {
         "message": "Uploading..."
@@ -2947,6 +3192,30 @@
     },
     "mixerApplyDescription": {
         "message": "This action overrides all current mixer settings and replaces them with default values. There is no 'Undo' option!"
+    },
+    "mixerWizardModalTitle" : {
+        "message": "Quadcopter Mixer Wizard"
+    },
+    "mixerWizardModalApply" : {
+        "message": "Apply"
+    },
+    "motorWizard0": {
+        "message": "Rear-Right"
+    },
+    "motorWizard1": {
+        "message": "Front-Right"
+    },
+    "motorWizard2": {
+        "message": "Rear-Left"
+    },
+    "motorWizard3": {
+        "message": "Front-Left"
+    },
+    "mixerWizardMotorPosition": {
+        "message": "Motor position"
+    },
+    "mixerWizardMotorIndex": {
+        "message": "Motor index"
     },
     "settings": {
         "message": "Settings"
@@ -3134,11 +3403,20 @@
     "logicFlags": {
         "message": "Flags"
     },
+    "logicStatus": {
+        "message": "Status"
+    },
     "logicSave": {
         "message": "Save"
     },
     "logicClose": {
         "message": "Close"
+    },
+    "logicActivator": {
+        "message": "Active"
+    },
+    "save": {
+        "message": "Save"
     },
     "active": {
         "message": "Active"
@@ -3148,12 +3426,6 @@
     },
     "itermRelaxHelp": {
         "message": "Defines Iterm relaxation algorithm activation. PR mean it's active on Roll and Pitch axis. PRY is active also on Yaw."
-    },
-    "itermRelaxType": {
-        "message": "Iterm Relax Type"
-    },
-    "itermRelaxTypeHelp": {
-        "message": "GYRO mode is more clinical and complete in suppressing iTerm, SETPOINT mode is a bit smoother with slightly softer landings after flips."
     },
     "itermRelaxCutoff": {
         "message": "Iterm Relax Cutoff Frequency"
@@ -3167,11 +3439,47 @@
     "gyro_lpf_type_help": {
         "message": "BIQUAD offers better noise attenuation for a price of higher delay. PT1 has lower attenuation but offers lower delay."
     },
+    "gyro_stage2_lowpass_type": {
+        "message": "Gyro Stage 2 LPF type"
+    },
+    "gyro_stage2_lowpass_type_help": {
+        "message": "BIQUAD offers better noise attenuation for a price of higher delay. PT1 has lower attenuation but offers lower delay."
+    },
+    "dterm_lpf_type": {
+        "message": "D-term LPF type"
+    },
+    "dterm_lpf_type_help": {
+        "message": "BIQUAD offers better noise attenuation for a price of higher delay. PT1 has lower attenuation but offers lower delay."
+    },
+    "dterm_lpf2_type": {
+        "message": "D-term Stage 2 LPF type"
+    },
+    "dterm_lpf2_type_help": {
+        "message": "BIQUAD offers better noise attenuation for a price of higher delay. PT1 has lower attenuation but offers lower delay."
+    },
+    "dterm_lpf2_hz": {
+        "message": "D-term Stage 2 LPF cutoff frequency"
+    },
+    "dterm_lpf2_hz_help": {
+        "message": "Lowpass cutoff filter for D-term on ROLL and PITCH axises. 0 mean filter is disabled"
+    },
     "tabFilteringAdvanced": {
         "message": "Other filters"
     },
     "mainFilters": {
-        "message": "Main filters"
+        "message": "Gyro filters"
+    },
+    "rpmFilters": {
+        "message": "Gyro RPM filters"
+    },
+    "dtermFilters": {
+        "message": "D-term filters"
+    },
+    "rpm_gyro_filter_enabled": {
+        "message": "Gyro RPM filter (requires ESC telemetry)"
+    },
+    "rpm_gyro_min_hz": {
+        "message": "Gyro RPM filter min. frequency"
     },
     "acc_lpf_type": {
         "message": "Accelerometer LPF type"
@@ -3207,7 +3515,7 @@
         "message": "Airmode handling type"
     },
     "mc_airmode_type_help": {
-        "message": "Defines the Airmode state handling type for Multirotors. <br />Default STICK_CENTER is the classical approach in which Airmode is always active if enabled, but when the throttle is low and ROLL/PITCH/YAW sticks are centered, Iterms is not allowed to grow (ANTI_WINDUP). <br />THROTTLE_THRESHOLD is the Airmode behavior known from Betaflight. In this mode, Airmode is active as soon THROTTLE position is above <i>mc_airmode_threshold</i> and stays active until disarm. ANTI_WINDUP is never triggered. For small Multirotors (up to 7-inch propellers) it is suggested to switch to THROTTLE_THRESHOLD since it keeps full stabilization no matter what pilot does with the sticks. Fixed Wings always use STICK_CENTER mode."
+        "message": "Defines the Airmode state handling type for Multirotors. <br />Default STICK_CENTER is the classical approach in which Airmode is always active if enabled, but when the throttle is low and ROLL/PITCH/YAW sticks are centered, Iterms is not allowed to grow (ANTI_WINDUP). <br />STICK_CENTER_ONCE works like STICK_CENTER, but only until the first time THROTTLE is not low and ROLL/PITCH/YAW sticks are moved. After that, ANTI_WINDUP is deactivated until next arm. Useful for airplanes. <br />THROTTLE_THRESHOLD is the Airmode behavior known from Betaflight. In this mode, Airmode is active as soon THROTTLE position is above <i>mc_airmode_threshold</i> and stays active until disarm. ANTI_WINDUP is never triggered. For small Multirotors (up to 7-inch propellers) it is suggested to switch to THROTTLE_THRESHOLD since it keeps full stabilization no matter what pilot does with the sticks. Airplanes default to STICK_CENTER mode."
     },
     "mc_airmode_threshold": {
         "message": "Airmode Throttle threshold"
@@ -3239,6 +3547,9 @@
     "defaultsDialogInfo": {
         "message": "INAV Configurator would like to know which kind of UAV you are configuring. Based on this information it will modify some default values to unlock the best flying performance. "
     },
+    "defaultsDialogInfo2": {
+        "message": "Avoid blindly restoring all PID and filter configuration from the previous version of INAV. The best result can be obtained by retuning from defaults!"
+    },
     "throttleIdle": {
         "message": "Motors IDLE power [%]"
     },
@@ -3250,5 +3561,53 @@
     },
     "motor_poles": {
         "message": "Number of motor poles (number of magnets)"
+    },
+    "motorStopWarning": {
+        "message": "Should be enabled on Airplanes, Rovers and Boats. Should not be enabled on Multirotors! On Multirotors, when Airmode is active, motors will not stop."
+    },
+    "reversibleEscWarning": {
+        "message": "When Reversible Motors are used, set Motors IDLE power ot 0%"
+    },
+    "dynamic_gyro_notch_enabled_help": {
+        "message": "Matrix Gyro Filter is the new generation of dynamic gyro notches available in INAV. It is recommended to enable it on all Multirotor builds on F4 and F7 flight controllers."
+    },
+    "globalFunctions": {
+        "message": "Global functions"
+    },
+    "functionId": {
+        "message": "#"
+    },
+    "functionEnabled": {
+        "message": "Enabled"
+    },
+    "functionLogicId": {
+        "message": "Activation Logic Condition"
+    },
+    "functionAction": {
+        "message": "Action"
+    },
+    "functionOperand": {
+        "message": "Operand"
+    },
+    "functionFlags": {
+        "message": "Flags"
+    },
+    "configurationI2cSpeed": {
+        "message": "I2C Speed"
+    },
+    "configurationI2cSpeedHelp": {
+        "message": "I2C speed should be kept at the highest level that allows for all connected devices to work. Default 400kHz is a save value and it is suggested to switch to 800kHz in case of Multirotors."
+    },
+    "i2cSpeedSuggested800khz": {
+        "message": "Please switch to 800kHz if connected hardware allows for it"
+    },
+    "i2cSpeedTooLow": {
+        "message": "This I2C speed is too low!"
+    },
+    "configurationVoltageMeterType": {
+        "message": "Voltage Meter Type"
+    },
+    "configurationCurrentMeterType": {
+        "message": "Current Meter Type"
     }
 }

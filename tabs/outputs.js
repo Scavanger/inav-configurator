@@ -1,4 +1,4 @@
-/*global helper,MSP,MSPChainerClass,googleAnalytics,GUI,mspHelper,MOTOR_RULES,TABS,$,MSPCodes,ANALOG,MOTOR_DATA,chrome,PLATFORM_MULTIROTOR,BF_CONFIG,PLATFORM_TRICOPTER,SERVO_RULES,FC,SERVO_CONFIG,SENSOR_DATA,_3D,MISC,MIXER_CONFIG,OUTPUT_MAPPING*/
+/*global helper,MSP,MSPChainerClass,googleAnalytics,GUI,mspHelper,MOTOR_RULES,TABS,$,MSPCodes,ANALOG,MOTOR_DATA,chrome,PLATFORM_MULTIROTOR,BF_CONFIG,PLATFORM_TRICOPTER,SERVO_RULES,FC,SERVO_CONFIG,SENSOR_DATA,REVERSIBLE_MOTORS,MISC,MIXER_CONFIG,OUTPUT_MAPPING*/
 'use strict';
 
 TABS.outputs = {
@@ -64,6 +64,9 @@ TABS.outputs.initialize = function (callback) {
     }
 
     function onLoad() {
+
+        self.feature3DEnabled = bit_check(BF_CONFIG.features, 12);
+
         process_motors();
         process_servos();
         processConfiguration();
@@ -77,10 +80,25 @@ TABS.outputs.initialize = function (callback) {
         finalize();
     }
 
+    function getMotorOutputValue(value) {
+
+        if (!self.feature3DEnabled) {
+            let valueNormalized = value - MISC.mincommand;
+            let maxThrottleNormalized = MISC.maxthrottle - MISC.mincommand;
+
+            return Math.round(100 * valueNormalized / maxThrottleNormalized) + "%";
+        } else {
+            return value;
+        }
+    }
+
     function processConfiguration() {
         let escProtocols = FC.getEscProtocols(),
             servoRates = FC.getServoRates(),
-            $idleInfoBox = $("#throttle_idle-info");
+            $idlePercent = $('#throttle_idle'),
+            $idleInfoBox = $("#throttle_idle-info"),
+            $motorStopWarningBox = $("#motor-stop-warning"),
+            $reversibleMotorBox = $("#reversible-esc-info")
 
         function buildMotorRates() {
             var protocolData = escProtocols[ADVANCED_CONFIG.motorPwmProtocol];
@@ -100,17 +118,21 @@ TABS.outputs.initialize = function (callback) {
                 $escRate.append('<option value="' + ADVANCED_CONFIG.motorPwmRate + '">' + ADVANCED_CONFIG.motorPwmRate + 'Hz</option>');
             }
 
+            $idleInfoBox.hide();
             if (ADVANCED_CONFIG.motorPwmProtocol >= 5) {
                 $('.hide-for-shot').hide();
-                $idleInfoBox.html(chrome.i18n.getMessage('throttleIdleDigitalInfo'));
-                $idleInfoBox.addClass('ok-box');
-                $idleInfoBox.show();
-
+                if ($idlePercent.val() > 7.0) {
+                    $idleInfoBox.html(chrome.i18n.getMessage('throttleIdleDigitalInfo'));
+                    $idleInfoBox.addClass('ok-box');
+                    $idleInfoBox.show();
+                }
             } else {
                 $('.hide-for-shot').show();
-                $idleInfoBox.html(chrome.i18n.getMessage('throttleIdleAnalogInfo'));
-                $idleInfoBox.addClass('ok-box');
-                $idleInfoBox.show();
+                if ($idlePercent.val() > 10.0) {
+                    $idleInfoBox.html(chrome.i18n.getMessage('throttleIdleAnalogInfo'));
+                    $idleInfoBox.addClass('ok-box');
+                    $idleInfoBox.show();
+                }
             }
 
             if (protocolData.message !== null) {
@@ -146,6 +168,8 @@ TABS.outputs.initialize = function (callback) {
             ADVANCED_CONFIG.motorPwmRate = $(this).val();
         });
 
+        $idlePercent.change(buildMotorRates);
+
         $("#esc-protocols").show();
 
         let $servoRate = $('#servo-rate');
@@ -171,6 +195,34 @@ TABS.outputs.initialize = function (callback) {
 
         helper.features.updateUI($('.tab-motors'), BF_CONFIG.features);
         GUI.simpleBind();
+
+        let $reversibleMotorCheckbox = $('#feature-12');
+        function showHideReversibleMotorInfo() {
+            const reversibleMotorEnabled = $reversibleMotorCheckbox.is(':checked');
+
+            console.log(reversibleMotorEnabled);
+
+            if (reversibleMotorEnabled) {
+                $reversibleMotorBox.show();
+            } else {
+                $reversibleMotorBox.hide();
+            }
+        }
+        $reversibleMotorCheckbox.change(showHideReversibleMotorInfo);
+        showHideReversibleMotorInfo();
+
+        let $motorStopCheckbox = $('#feature-4');
+        function showHideMotorStopWarning() {
+            const platformNeedsMotorStop = [PLATFORM_AIRPLANE, PLATFORM_ROVER, PLATFORM_BOAT].includes(MIXER_CONFIG.platformType);
+            const motorStopEnabled = $motorStopCheckbox.is(':checked');
+            if (platformNeedsMotorStop && motorStopEnabled || !platformNeedsMotorStop && !motorStopEnabled) {
+                $motorStopWarningBox.hide();
+            } else {
+                $motorStopWarningBox.show();
+            }
+        }
+        $motorStopCheckbox.change(showHideMotorStopWarning);
+        showHideMotorStopWarning();
     }
 
     function update_arm_status() {
@@ -258,7 +310,7 @@ TABS.outputs.initialize = function (callback) {
             );
 
             $currentRow.find('td.reverse').append(
-                '<input type="checkbox" class="reverse-input togglemedium" ' + (SERVO_CONFIG[obj].rate < 0 ? ' checked ' :  '') + '/>'
+                '<input type="checkbox" class="reverse-input togglemedium" ' + (SERVO_CONFIG[obj].rate < 0 ? ' checked ' : '') + '/>'
             );
 
             $currentRow.data('info', { 'obj': obj });
@@ -367,8 +419,6 @@ TABS.outputs.initialize = function (callback) {
     function process_motors() {
         $motorsEnableTestMode = $('#motorsEnableTestMode');
 
-        self.feature3DEnabled = bit_check(BF_CONFIG.features, 12);
-
         if (self.feature3DEnabled && !self.feature3DSupported) {
             self.allowTestMode = false;
         }
@@ -438,9 +488,9 @@ TABS.outputs.initialize = function (callback) {
             var sum = 0.0;
             for (var j = 0; j < accel_data.length; j++)
                 for (var k = 0; k < accel_data[j].length; k++)
-                    sum += accel_data[j][k][1]*accel_data[j][k][1];
+                    sum += accel_data[j][k][1] * accel_data[j][k][1];
 
-            let rms = Math.sqrt(sum/(accel_data[0].length+accel_data[1].length+accel_data[2].length));
+            let rms = Math.sqrt(sum / (accel_data[0].length + accel_data[1].length + accel_data[2].length));
             $rmsHelper.text(rms.toFixed(4));
 
             for (var i = 0; i < 3; i++) {
@@ -470,7 +520,7 @@ TABS.outputs.initialize = function (callback) {
             ');
             $motorTitles.append('<li title="Motor - ' + motorNumber + '">' + motorNumber + '</li>');
             $motorSliders.append('<div class="motor-slider-container"><input type="range" min="1000" max="2000" value="1000" disabled="disabled"/></div>');
-            $motorValues.append('<li>1000</li>');
+            $motorValues.append('<li>0%</li>');
         }
 
         $motorSliders.append('<div class="motor-slider-container"><input type="range" min="1000" max="2000" value="1000" disabled="disabled" class="master"/></div>');
@@ -503,56 +553,56 @@ TABS.outputs.initialize = function (callback) {
         $slidersInput.prop('max', MISC.maxthrottle);
         $('div.values li:not(:last)').text(MISC.mincommand);
 
-        if(self.feature3DEnabled && self.feature3DSupported) {
+        if (self.feature3DEnabled && self.feature3DSupported) {
             //Arbitrary sanity checks
             //Note: values may need to be revisited
-            if(_3D.neutral3d > 1575 || _3D.neutral3d < 1425)
-                _3D.neutral3d = 1500;
+            if (REVERSIBLE_MOTORS.neutral > 1575 || REVERSIBLE_MOTORS.neutral < 1425)
+                REVERSIBLE_MOTORS.neutral = 1500;
 
-            $slidersInput.val(_3D.neutral3d);
+            $slidersInput.val(REVERSIBLE_MOTORS.neutral);
         } else {
             $slidersInput.val(MISC.mincommand);
         }
 
-        if(self.allowTestMode){
-           // UI hooks
-           var buffering_set_motor = [],
-           buffer_delay = false;
-           $('div.sliders input:not(.master)').on('input', function () {
+        if (self.allowTestMode) {
+            // UI hooks
+            var buffering_set_motor = [],
+                buffer_delay = false;
 
-               var index = $('div.sliders input:not(.master)').index(this),
-               buffer = [],
-               i;
+            $('div.sliders input:not(.master)').on('input', function () {
 
-               $('div.values li').eq(index).text($(this).val());
+                var index = $('div.sliders input:not(.master)').index(this),
+                    buffer = [],
+                    i;
 
-               for (i = 0; i < 8; i++) {
-               var val = parseInt($('div.sliders input').eq(i).val());
+                $('div.values li').eq(index).text(getMotorOutputValue($(this).val()));
 
-               buffer.push(lowByte(val));
-               buffer.push(highByte(val));
-               }
+                for (i = 0; i < 8; i++) {
+                    var val = parseInt($('div.sliders input').eq(i).val());
 
-               buffering_set_motor.push(buffer);
+                    buffer.push(lowByte(val));
+                    buffer.push(highByte(val));
+                }
 
-               if (!buffer_delay) {
-                   buffer_delay = setTimeout(function () {
-                       buffer = buffering_set_motor.pop();
+                buffering_set_motor.push(buffer);
 
-                       MSP.send_message(MSPCodes.MSP_SET_MOTOR, buffer);
+                if (!buffer_delay) {
+                    buffer_delay = setTimeout(function () {
+                        buffer = buffering_set_motor.pop();
 
-                       buffering_set_motor = [];
-                       buffer_delay = false;
-                   }, 10);
-               }
-           });
+                        MSP.send_message(MSPCodes.MSP_SET_MOTOR, buffer);
+
+                        buffering_set_motor = [];
+                        buffer_delay = false;
+                    }, 10);
+                }
+            });
         }
 
         $('div.sliders input.master').on('input', function () {
             var val = $(this).val();
-
             $('div.sliders input:not(:disabled, :last)').val(val);
-            $('div.values li:not(:last)').slice(0, MOTOR_RULES.getNumberOfConfiguredMotors()).text(val);
+            $('div.values li:not(:last)').slice(0, MOTOR_RULES.getNumberOfConfiguredMotors()).text(getMotorOutputValue(val));
             $('div.sliders input:not(:last):first').trigger('input');
         });
 
@@ -568,7 +618,7 @@ TABS.outputs.initialize = function (callback) {
 
                 // change all values to default
                 if (self.feature3DEnabled && self.feature3DSupported) {
-                    $slidersInput.val(_3D.neutral3d);
+                    $slidersInput.val(REVERSIBLE_MOTORS.neutral);
                 } else {
                     $slidersInput.val(MISC.mincommand);
                 }
@@ -581,13 +631,13 @@ TABS.outputs.initialize = function (callback) {
         var motors_running = false;
 
         for (var i = 0; i < MOTOR_RULES.getNumberOfConfiguredMotors(); i++) {
-            if( !self.feature3DEnabled ){
+            if (!self.feature3DEnabled) {
                 if (MOTOR_DATA[i] > MISC.mincommand) {
                     motors_running = true;
                     break;
                 }
-            }else{
-                if( (MOTOR_DATA[i] < _3D.deadband3d_low) || (MOTOR_DATA[i] > _3D.deadband3d_high) ){
+            } else {
+                if ((MOTOR_DATA[i] < REVERSIBLE_MOTORS.deadband_low) || (MOTOR_DATA[i] > REVERSIBLE_MOTORS.deadband_high)) {
                     motors_running = true;
                     break;
                 }
@@ -661,8 +711,8 @@ TABS.outputs.initialize = function (callback) {
                 height = (data * (block_height / full_block_scale)).clamp(0, block_height);
                 color = parseInt(data * 0.009);
 
-                $('.motor-' + i + ' .label', motors_wrapper).text(MOTOR_DATA[i]);
-                $('.motor-' + i + ' .indicator', motors_wrapper).css({'margin-top' : margin_top + 'px', 'height' : height + 'px', 'background-color' : '#37a8db'+ color +')'});
+                $('.motor-' + i + ' .label', motors_wrapper).text(getMotorOutputValue(MOTOR_DATA[i]));
+                $('.motor-' + i + ' .indicator', motors_wrapper).css({ 'margin-top': margin_top + 'px', 'height': height + 'px', 'background-color': '#37a8db' + color + ')' });
             }
 
             // servo indicators are still using old (not flexible block scale), it will be changed in the future accordingly
@@ -673,7 +723,7 @@ TABS.outputs.initialize = function (callback) {
                 color = parseInt(data * 0.009);
 
                 $('.servo-' + i + ' .label', servos_wrapper).text(SERVO_DATA[i]);
-                $('.servo-' + i + ' .indicator', servos_wrapper).css({'margin-top' : margin_top + 'px', 'height' : height + 'px', 'background-color' : '#37a8db'+ color +')'});
+                $('.servo-' + i + ' .indicator', servos_wrapper).css({ 'margin-top': margin_top + 'px', 'height': height + 'px', 'background-color': '#37a8db' + color + ')' });
             }
             //keep the following here so at least we get a visual cue of our motor setup
             update_arm_status();
@@ -695,7 +745,7 @@ TABS.outputs.initialize = function (callback) {
         }
 
         // enable Status and Motor data pulling
-        helper.interval.add('motor_and_status_pull', getPeriodicMotorOutput, 75, true);
+        helper.interval.add('motor_and_status_pull', getPeriodicMotorOutput, 100, true);
     }
 
     function finalize() {

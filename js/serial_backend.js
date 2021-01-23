@@ -199,11 +199,11 @@ function onValidFirmware()
                 GUI.allowedTabs = GUI.defaultAllowedTabsWhenConnected.slice();
                 onConnect();
 
-                if (semver.gte(CONFIG.flightControllerVersion, "2.3.0")) {
-                    helper.defaultsDialog.init();
-                }
+                helper.defaultsDialog.init();
 
                 $('#tabs ul.mode-connected .tab_setup a').click();
+
+                updateFirmwareVersion();
             });
         });
     });
@@ -331,6 +331,19 @@ function onConnect() {
      */
     MSP.send_message(MSPCodes.MSP_BOXNAMES, false, false);
 
+    /*
+     * Init PIDs bank with a length that depends on the version
+     */
+    let pidCount;
+    if (semver.gte(CONFIG.flightControllerVersion, "2.5.0")) {
+        pidCount = 11;
+    } else {
+        pidCount = 10;
+    }
+    for (let i = 0; i < pidCount; i++) {
+        PIDs.push(new Array(4));
+    }
+
     helper.interval.add('msp-load-update', function () {
         $('#msp-version').text("MSP version: " + MSP.protocolVersion.toFixed(0));
         $('#msp-load').text("MSP load: " + helper.mspQueue.getLoad().toFixed(1));
@@ -356,6 +369,8 @@ function onClosed(result) {
     $('#portsinput').show();
     $('#dataflash_wrapper_global').hide();
     $('#quad-status_wrapper').hide();
+
+    updateFirmwareVersion();
 }
 
 function read_serial(info) {

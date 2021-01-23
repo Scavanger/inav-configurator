@@ -12,7 +12,9 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
         $servoMixTable,
         $servoMixTableBody,
         $motorMixTable,
-        $motorMixTableBody;
+        $motorMixTableBody,
+        modal,
+        motorWizardModal;
 
     if (GUI.active_tab != 'mixer') {
         GUI.active_tab = 'mixer';
@@ -103,21 +105,22 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
                     <td class="mixer-fixed-value-col"><input type="number" class="mix-rule-fixed-value" min="875" max="2125" disabled /></td> \
                     <td><input type="number" class="mix-rule-rate" step="1" min="-125" max="125" /></td>\
                     <td><input type="number" class="mix-rule-speed" step="1" min="0" max="255" /></td>\
-                    <td><select class="mix-rule-condition"></td>\
+                    <td class="mixer-table__condition"></td>\
                     <td><span class="btn default_btn narrow red"><a href="#" data-role="role-servo-delete" data-i18n="servoMixerDelete"></a></span></td>\
                     </tr>\
                 ');
 
                 const $row = $servoMixTableBody.find('tr:last');
-                const $conditions = $row.find('.mix-rule-condition');
 
-                $conditions.append('<option value="-1">Always</option>')
-                for (let i = 0; i < 16 ; i++) {
-                    $conditions.append('<option value="' + i + '">Logic Condition ' + i + ' </option>');
-                }
-                $conditions.val(servoRule.getConditionId()).change(function () {
-                    servoRule.setConditionId($(this).val());
-                });
+                GUI.renderLogicConditionSelect(
+                    $row.find('.mixer-table__condition'), 
+                    LOGIC_CONDITIONS, 
+                    servoRule.getConditionId(), 
+                    function () {
+                        servoRule.setConditionId($(this).val());
+                    },
+                    true
+                );
 
                 GUI.fillSelect($row.find(".mix-rule-input"), FC.getServoMixInputNames(), servoRule.getInput());
 
@@ -156,9 +159,9 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
 
     function updateFixedValueVisibility(row, $mixRuleInput) {
 
-        // Show the fixed value input box if "ONE" input was selected for this servo
+        // Show the fixed value input box if "MAX" input was selected for this servo
         const $fixedValueCalcInput = row.find(".mix-rule-fixed-value");
-        if (FC.getServoMixInputNames()[$mixRuleInput.val()] === 'ONE') {
+        if (FC.getServoMixInputNames()[$mixRuleInput.val()] === 'MAX') {
             $fixedValueCalcInput.show();
             row.find(".mix-rule-speed").prop('disabled', true);
         } else {
@@ -166,12 +169,12 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
             row.find(".mix-rule-speed").prop('disabled', false);
         }
 
-        // Show the Fixed Value column if at least one servo has the "ONE" input assigned
+        // Show the Fixed Value column if at least one servo has the "MAX" input assigned
         const $fixedValueCol = $("#servo-mix-table").find(".mixer-fixed-value-col");
         const rules = SERVO_RULES.get();
         for (let servoRuleIndex in rules) {
             if (rules.hasOwnProperty(servoRuleIndex)) {
-                if (FC.getServoMixInputNames()[rules[servoRuleIndex].getInput()] === 'ONE') {
+                if (FC.getServoMixInputNames()[rules[servoRuleIndex].getInput()] === 'MAX') {
                     $fixedValueCol.show();
                     return;
                 }
@@ -272,7 +275,75 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
             $hasFlapsWrapper = $('#has-flaps-wrapper'),
             $hasFlaps = $('#has-flaps'),
             $mixerPreset = $('#mixer-preset'),
-            modal;
+            $wizardButton = $("#mixer-wizard");
+
+        motorWizardModal = new jBox('Modal', {
+            width: 480,
+            height: 410,
+            closeButton: 'title',
+            animation: false,
+            attach: $wizardButton,
+            title: chrome.i18n.getMessage("mixerWizardModalTitle"),
+            content: $('#mixerWizardContent')
+        });
+
+        function validateMixerWizard() {
+            let errorCount = 0;
+            for (let i = 0; i < 4; i++) {
+                const $elements = $('[data-motor] option:selected[id=' + i + ']'),
+                    assignedRulesCount = $elements.length;
+
+                if (assignedRulesCount != 1) {
+                    errorCount++;
+                    $elements.closest('tr').addClass("red-background");
+                } else {
+                    $elements.closest('tr').removeClass("red-background");
+                }
+
+            }
+
+            return (errorCount == 0);
+        }
+
+        $(".wizard-motor-select").change(validateMixerWizard);
+
+        $("#wizard-execute-button").click(function () {
+
+            // Validate mixer settings
+            if (!validateMixerWizard()) {
+                return;
+            }
+
+            MOTOR_RULES.flush();
+
+            for (let i = 0; i < 4; i++) {
+                const $selects = $(".wizard-motor-select");
+                let rule = -1;
+
+                $selects.each(function () {
+                    if (parseInt($(this).find(":selected").attr("id"), 10) == i) {
+                        rule = parseInt($(this).attr("data-motor"), 10);
+                    }
+                });
+
+                const r = currentMixerPreset.motorMixer[rule];
+
+                MOTOR_RULES.put(
+                    new MotorMixRule(
+                        r.getThrottle(),
+                        r.getRoll(),
+                        r.getPitch(),
+                        r.getYaw()
+                    )
+                );
+                
+            }
+
+            renderMotorMixRules();
+            renderOutputMapping();
+
+            motorWizardModal.close();
+        });
 
         $platformSelect.find("*").remove();
 
@@ -319,6 +390,12 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
             currentMixerPreset = helper.mixer.getById(presetId);
 
             MIXER_CONFIG.appliedMixerPreset = presetId;
+
+            if (currentMixerPreset.id == 3) {
+                $wizardButton.parent().removeClass("is-hidden");
+            } else {
+                $wizardButton.parent().addClass("is-hidden");
+            }
 
             $('.mixerPreview img').attr('src', './resources/motor_order/'
                 + currentMixerPreset.image + '.svg');
@@ -406,15 +483,13 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
 
         localize();
 
-        if (semver.gte(CONFIG.flightControllerVersion, "2.3.0")) {
-            helper.mspBalancedInterval.add('logic_conditions_pull', 350, 1, getLogicConditionsStatus);
-        }
+        helper.mspBalancedInterval.add('logic_conditions_pull', 350, 1, getLogicConditionsStatus);
 
         GUI.content_ready(callback);
     }
 
     function getLogicConditionsStatus() {
-        mspHelper.loadSensorStatus(onStatusPullDone);
+        mspHelper.loadLogicConditionsStatus(onStatusPullDone);
     }
 
     function onStatusPullDone() {
@@ -424,5 +499,8 @@ TABS.mixer.initialize = function (callback, scrollPosition) {
 };
 
 TABS.mixer.cleanup = function (callback) {
+    delete modal;
+    delete motorWizardModal;
+    $('.jBox-wrapper').remove();
     if (callback) callback();
 };

@@ -54,6 +54,7 @@ $(document).ready(function () {
 
     $('#status-bar .version').text(chrome.runtime.getManifest().version);
     $('#logo .version').text(chrome.runtime.getManifest().version);
+    updateFirmwareVersion();
 
     // notification messages for various operating systems
     switch (GUI.operating_system) {
@@ -91,20 +92,10 @@ $(document).ready(function () {
             }
         });
 
-        win.setMinimumSize(1024, 800);
+        win.setMinimumSize(800, 600);
 
         win.on('close', function () {
             //Save window size and position
-            // var height = win.height;
-            // var width = win.width;
-            //
-            // if (height < 400) {
-            //     height = 400
-            // }
-            // if (width < 512) {
-            //     width = 512
-            // }
-
             chrome.storage.local.set({'windowSize': {height: win.height, width: win.width, x: win.x, y: win.y}}, function () {
                 // Notify that we saved.
                 console.log('Settings saved');
@@ -256,6 +247,9 @@ $(document).ready(function () {
                         break;
                     case 'advanced_tuning':
                         TABS.advanced_tuning.initialize(content_ready);
+                        break;
+                    case 'programming':
+                        TABS.programming.initialize(content_ready);
                         break;
                     case 'cli':
                         TABS.cli.initialize(content_ready);
@@ -531,10 +525,16 @@ String.prototype.format = function () {
     });
 };
 
-
-
 function updateActivatedTab() {
     var activeTab = $('#tabs > ul li.active');
     activeTab.removeClass('active');
     $('a', activeTab).trigger('click');
+}
+
+function updateFirmwareVersion() {
+    if (CONFIGURATOR.connectionValid) {
+        $('#logo .firmware_version').text(CONFIG.flightControllerVersion);
+    } else {
+        $('#logo .firmware_version').text(chrome.i18n.getMessage('fcNotConnected'));
+    }
 }

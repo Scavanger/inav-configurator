@@ -20,6 +20,10 @@ var CONFIG,
     SERVO_RULES,
     MOTOR_RULES,
     LOGIC_CONDITIONS,
+    LOGIC_CONDITIONS_STATUS,
+    GLOBAL_FUNCTIONS,
+    GLOBAL_VARIABLES_STATUS,
+    PROGRAMMING_PID,
     SERIAL_CONFIG,
     SENSOR_DATA,
     MOTOR_DATA,
@@ -30,7 +34,7 @@ var CONFIG,
     ARMING_CONFIG,
     FC_CONFIG,
     MISC,
-    _3D,
+    REVERSIBLE_MOTORS,
     DATAFLASH,
     SDCARD,
     BLACKBOX,
@@ -63,10 +67,13 @@ var FC = {
     MAX_SERVO_RATE: 125,
     MIN_SERVO_RATE: 0,
     isRpyFfComponentUsed: function () {
-        return MIXER_CONFIG.platformType == PLATFORM_AIRPLANE;
+        return (MIXER_CONFIG.platformType == PLATFORM_AIRPLANE || MIXER_CONFIG.platformType == PLATFORM_ROVER || MIXER_CONFIG.platformType == PLATFORM_BOAT) || ((MIXER_CONFIG.platformType == PLATFORM_MULTIROTOR || MIXER_CONFIG.platformType == PLATFORM_TRICOPTER) && semver.gte(CONFIG.flightControllerVersion, "2.6.0"));
     },
     isRpyDComponentUsed: function () {
-        return MIXER_CONFIG.platformType != PLATFORM_AIRPLANE;
+        return MIXER_CONFIG.platformType == PLATFORM_MULTIROTOR || MIXER_CONFIG.platformType == PLATFORM_TRICOPTER;
+    },
+    isCdComponentUsed: function () {
+        return FC.isRpyDComponentUsed();
     },
     resetState: function () {
         SENSOR_STATUS = {
@@ -130,11 +137,7 @@ var FC = {
         };
 
         PID_names = [];
-        PIDs = new Array(10);
-        for (var i = 0; i < 10; i++) {
-            PIDs[i] = new Array(4);
-        }
-
+        PIDs = [];
         RC_MAP = [];
 
         // defaults
@@ -174,6 +177,8 @@ var FC = {
         MOTOR_RULES = new MotorMixerRuleCollection();
         LOGIC_CONDITIONS = new LogicConditionsCollection();
         LOGIC_CONDITIONS_STATUS = new LogicConditionsStatus();
+        GLOBAL_VARIABLES_STATUS = new GlobalVariablesStatus();
+        PROGRAMMING_PID = new ProgrammingPidCollection();
 
         MIXER_CONFIG = {
             yawMotorDirection: 0,
@@ -401,6 +406,11 @@ var FC = {
             },
             opflow: {
                 Scale: null
+            },
+            magGain: {
+                X: null,
+                Y: null,
+                Z: null
             }
         };
 
@@ -419,11 +429,11 @@ var FC = {
              emergencyDescentRate: null
         };
 
-        _3D = {
-            deadband3d_low: 0,
-            deadband3d_high: 0,
-            neutral3d: 0,
-            deadband3d_throttle: 0
+        REVERSIBLE_MOTORS = {
+            deadband_low: 0,
+            deadband_high: 0,
+            neutral: 0,
+            deadband_throttle: 0
         };
 
         DATAFLASH = {
@@ -553,7 +563,7 @@ var FC = {
             {bit: 7, group: 'gps', name: 'GPS', haveTip: true},
             {bit: 10, group: 'other', name: 'TELEMETRY', showNameInTip: true},
             {bit: 11, group: 'batteryCurrent', name: 'CURRENT_METER'},
-            {bit: 12, group: 'other', name: '3D', showNameInTip: true},
+            {bit: 12, group: 'other', name: 'REVERSIBLE_MOTORS', showNameInTip: true},
             {bit: 15, group: 'other', name: 'RSSI_ADC', haveTip: true, showNameInTip: true},
             {bit: 16, group: 'other', name: 'LED_STRIP', showNameInTip: true},
             {bit: 17, group: 'other', name: 'DASHBOARD', showNameInTip: true},
@@ -566,9 +576,12 @@ var FC = {
             {bit: 30, group: 'other', name: 'FW_LAUNCH', haveTip: false, showNameInTip: false},
             {bit: 2, group: 'other', name: 'TX_PROF_SEL', haveTip: false, showNameInTip: false},
             {bit: 0, group: 'other', name: 'THR_VBAT_COMP', haveTip: true, showNameInTip: true},
-            {bit: 3, group: 'other', name: 'BAT_PROFILE_AUTOSWITCH', haveTip: true, showNameInTip: true},
-            {bit: 5, group: 'other', name: 'DYNAMIC_FILTERS', haveTip: true, showNameInTip: true}
+            {bit: 3, group: 'other', name: 'BAT_PROFILE_AUTOSWITCH', haveTip: true, showNameInTip: true}
         ];
+
+        if (semver.gte(CONFIG.flightControllerVersion, "2.4.0") && semver.lt(CONFIG.flightControllerVersion, "2.5.0")) {
+            features.push({bit: 5, group: 'other', name: 'DYNAMIC_FILTERS', haveTip: true, showNameInTip: true});
+        }
 
         return features.reverse();
     },
@@ -677,7 +690,8 @@ var FC = {
             'I2C-NAV',
             'DJI NAZA',
             'UBLOX7',
-            'MTK'
+            'MTK',
+            'MSP'
         ];
     },
     getGpsBaudRates: function () {
@@ -697,95 +711,6 @@ var FC = {
             'Japanese MSAS',
             'Indian GAGAN',
             'Disabled'
-        ];
-    },
-    getRxTypes: function() {
-        // Keep value field in sync with rxReceiverType_e in rx.h
-        var rxTypes = [
-            {
-                name: 'RX_SERIAL',
-                bit: 3,
-                value: 3,
-            },
-            {
-                name: 'RX_PPM',
-                bit: 0,
-                value: 2,
-            },
-            {
-                name: 'RX_PWM',
-                bit: 13,
-                value: 1,
-            },
-        ];
-
-        if (semver.gte(CONFIG.apiVersion, "1.21.0")) {
-            rxTypes.push({
-                name: 'RX_SPI',
-                bit: 25,
-                value: 5,
-            });
-        }
-
-        rxTypes.push({
-            name: 'RX_MSP',
-            bit: 14,
-            value: 4,
-        });
-
-        // Versions using feature bits don't allow not having an
-        // RX and fallback to RX_PPM.
-        rxTypes.push({
-            name: 'RX_NONE',
-            value: 0,
-        });
-
-        return rxTypes;
-    },
-    isRxTypeEnabled: function(rxType) {
-        if (typeof rxType === 'string') {
-            var types = this.getRxTypes();
-            for (var ii = 0; ii < types.length; ii++) {
-                if (types[ii].name == rxType) {
-                    rxType = types[ii];
-                    break;
-                }
-            }
-        }
-        return RX_CONFIG.receiver_type == rxType.value;
-    },
-    setRxTypeEnabled: function(rxType) {
-        RX_CONFIG.receiver_type = rxType.value;
-    },
-    getSerialRxTypes: function () {
-        var data = [
-            'SPEKTRUM1024',
-            'SPEKTRUM2048',
-            'SBUS',
-            'SUMD',
-            'SUMH',
-            'XBUS_MODE_B',
-            'XBUS_MODE_B_RJ01',
-            'IBUS',
-            'JETI EXBUS',
-            'TBS Crossfire',
-            'FPort',
-            'SBUS Fast',
-        ];
-
-        return data;
-    },
-    getSPIProtocolTypes: function () {
-        return [
-            'V202 250Kbps',
-            'V202 1Mbps',
-            'Syma X',
-            'Syma X5C',
-            'Cheerson CX10',
-            'Cheerson CX10A',
-            'JJRC H8_3D',
-            'iNav Reference protocol',
-            'eLeReS'
         ];
     },
     getSensorAlignments: function () {
@@ -940,17 +865,21 @@ var FC = {
         return [ "NONE", "AUTO", "ADXL345", "MPU6050", "MMA845x", "BMA280", "LSM303DLHC", "MPU6000", "MPU6500", "MPU9250", "BMI160", "ICM20689", "FAKE"];
     },
     getMagnetometerNames: function () {
-        return ["NONE", "AUTO", "HMC5883", "AK8975", "GPSMAG", "MAG3110", "AK8963", "IST8310", "QMC5883", "MPU9250", "IST8308", "LIS3MDL", "FAKE"];
+        return ["NONE", "AUTO", "HMC5883", "AK8975", "GPSMAG", "MAG3110", "AK8963", "IST8310", "QMC5883", "MPU9250", "IST8308", "LIS3MDL", "MSP", "FAKE"];
     },
     getBarometerNames: function () {
-        if (semver.gte(CONFIG.flightControllerVersion, "2.4.0")) {
-            return ["NONE", "AUTO", "BMP085", "MS5611", "BMP280", "MS5607", "LPS25H", "SPL06", "BMP388", "FAKE"];
+        if (semver.gte(CONFIG.flightControllerVersion, "2.6.0")) {
+            return ["NONE", "AUTO", "BMP085", "MS5611", "BMP280", "MS5607", "LPS25H", "SPL06", "BMP388", "DPS310", "MSP", "FAKE"];
         } else {
-            return ["NONE", "AUTO", "BMP085", "MS5611", "BMP280", "MS5607", "LPS25H", "SPL06", "FAKE"];
+            return ["NONE", "AUTO", "BMP085", "MS5611", "BMP280", "MS5607", "LPS25H", "SPL06", "BMP388", "FAKE"];
         }
     },
     getPitotNames: function () {
-        return ["NONE", "AUTO", "MS4525", "ADC", "VIRTUAL", "FAKE"];
+        if (semver.gte(CONFIG.flightControllerVersion, "2.6.0")) {
+            return ["NONE", "AUTO", "MS4525", "ADC", "VIRTUAL", "FAKE", "MSP"];
+        } else {
+            return ["NONE", "AUTO", "MS4525", "ADC", "VIRTUAL", "FAKE"];
+        }
     },
     getRangefinderNames: function () {
         return [ "NONE", "HCSR04", "SRF10", "INAV_I2C", "VL53L0X", "MSP", "UIB", "Benewake TFmini"];
@@ -994,7 +923,7 @@ var FC = {
         ]
     },
     getPidNames: function () {
-        return [
+        let list = [
             'Roll',
             'Pitch',
             'Yaw',
@@ -1003,15 +932,18 @@ var FC = {
             'Velocity XY',
             'Surface',
             'Level',
-            'Heading',
+            'Heading Hold',
             'Velocity Z'
         ];
+
+        if (semver.gte(CONFIG.flightControllerVersion, '2.5.0')) {
+            list.push("Nav Heading")
+        }
+
+        return list;
     },
     getRthAltControlMode: function () {
-        if (semver.gte(CONFIG.flightControllerVersion, '2.2.0'))
-            return ["Current", "Extra", "Fixed", "Max", "At least", "At least, linear descent"];
-        else
-            return ["Current", "Extra", "Fixed", "Max", "At least"];
+        return ["Current", "Extra", "Fixed", "Max", "At least", "At least, linear descent"];
     },
     getRthAllowLanding: function() {
         return ["Never", "Always", "Only on failsafe"];
@@ -1078,7 +1010,15 @@ var FC = {
             'Stabilized Pitch-',    // 26
             'Stabilized Yaw+',      // 27
             'Stabilized Yaw-',      // 28,
-            'ONE'                   // 29,
+            'MAX',                  // 29,
+            'GVAR 0',               // 30
+            'GVAR 1',               // 31
+            'GVAR 2',               // 32
+            'GVAR 3',               // 33
+            'GVAR 4',               // 34
+            'GVAR 5',               // 35
+            'GVAR 6',               // 36
+            'GVAR 7',               // 37
         ];
     },
     getServoMixInputName: function (input) {
@@ -1101,59 +1041,198 @@ var FC = {
         return {
             0: {
                 name: "True",
-                hasOperand: [false, false]
+                hasOperand: [false, false],
+                output: "boolean"
             },
             1: {
                 name: "Equal",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             2: {
                 name: "Greater Than",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             3: {
                 name: "Lower Than",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             4: {
                 name: "Low",
-                hasOperand: [true, false]
+                hasOperand: [true, false],
+                output: "boolean"
             },
             5: {
                 name: "Mid",
-                hasOperand: [true, false]
+                hasOperand: [true, false],
+                output: "boolean"
             },
             6: {
                 name: "High",
-                hasOperand: [true, false]
+                hasOperand: [true, false],
+                output: "boolean"
             },
             7: {
                 name: "AND",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             8: {
                 name: "OR",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             9: {
                 name: "XOR",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             10: {
                 name: "NAND",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             11: {
                 name: "NOR",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
             },
             12: {
                 name: "NOT",
-                hasOperand: [true, false]
+                hasOperand: [true, false],
+                output: "boolean"
             },
             13: {
                 name: "STICKY",
-                hasOperand: [true, true]
+                hasOperand: [true, true],
+                output: "boolean"
+            },
+            14: {
+                name: "ADD",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            15: {
+                name: "SUB",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            16: {
+                name: "MUL",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            17: {
+                name: "DIV",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            18: {
+                name: "GVAR SET",
+                hasOperand: [true, true],
+                output: "none"
+            },
+            19: {
+                name: "GVAR INC",
+                hasOperand: [true, true],
+                output: "none"
+            },
+            20: {
+                name: "GVAR DEC",
+                hasOperand: [true, true],
+                output: "none"
+            },
+            21: {
+                name: "IO PORT SET",
+                hasOperand: [true, true],
+                output: "none"
+            },
+            22: {
+                name: "OVERRIDE ARMING SAFETY",
+                hasOperand: [false, false],
+                output: "boolean"
+            },
+            23: {
+                name: "OVERRIDE THROTTLE SCALE",
+                hasOperand: [true, false],
+                output: "boolean"
+            },
+            29: {
+                name: "OVERRIDE THROTTLE",
+                hasOperand: [true, false],
+                output: "boolean"
+            },
+            24: {
+                name: "SWAP ROLL & YAW",
+                hasOperand: [false, false],
+                output: "boolean"
+            },
+            25: {
+                name: "SET VTX POWER LEVEL",
+                hasOperand: [true, false],
+                output: "boolean"
+            },
+            30: {
+                name: "SET VTX BAND",
+                hasOperand: [true, false],
+                output: "boolean"
+            },
+            31: {
+                name: "SET VTX CHANNEL",
+                hasOperand: [true, false],
+                output: "boolean"
+            },
+            26: {
+                name: "INVERT ROLL",
+                hasOperand: [false, false],
+                output: "boolean"
+            },
+            27: {
+                name: "INVERT PITCH",
+                hasOperand: [false, false],
+                output: "boolean"
+            },
+            28: {
+                name: "INVERT YAW",
+                hasOperand: [false, false],
+                output: "boolean"
+            },
+            32: {
+                name: "SET OSD LAYOUT",
+                hasOperand: [true, false],
+                output: "boolean"
+            },
+            33: {
+                name: "SIN",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            34: {
+                name: "COS",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            35: {
+                name: "TAN",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            36: {
+                name: "MAP INPUT",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            37: {
+                name: "MAP OUTPUT",
+                hasOperand: [true, true],
+                output: "raw"
+            },
+            38: {
+                name: "RC CHANNEL OVERRIDE",
+                hasOperand: [true, true],
+                output: "boolean"
             }
         }
     },
@@ -1195,7 +1274,23 @@ var FC = {
                     14: "Throttle position [%]",
                     15: "Roll [deg]",
                     16: "Pitch [deg]",
-                    17: "Flight mode"
+                    17: "Is Armed",
+                    18: "Is Autolaunch",
+                    19: "Is Controlling Altitude",
+                    20: "Is Controlling Position",
+                    21: "Is Emergency Landing",
+                    22: "Is RTH",
+                    23: "Is WP",
+                    24: "Is Landing",
+                    25: "Is Failsafe",
+                    26: "Stabilized Roll",
+                    27: "Stabilized Pitch",
+                    28: "Stabilized Yaw",
+                    29: "Current Waypoint Index",
+                    30: "Current Waypoint Action",
+                    31: "3D home distance [m]",
+                    32: "CRSF LQ",
+                    33: "CRSF SNR",
                 }
             },
             3: {
@@ -1211,15 +1306,29 @@ var FC = {
                     5: "Altitude Hold",
                     6: "Angle",
                     7: "Horizon",
-                    8: "Air"
+                    8: "Air",
+                    9: "USER 1",
+                    10: "USER 2"
                 }
             },
             4: {
                 name: "Logic Condition",
                 type: "range",
-                range: [0, 15],
+                range: [0, 31],
                 default: 0
             },
+            5: {
+                name: "Global Variable",
+                type: "range",
+                range: [0, 7],
+                default: 0
+            },
+            6: {
+                name: "Programming PID",
+                type: "range",
+                range: [0, 3],
+                default: 0
+            }
         }
     }
 };

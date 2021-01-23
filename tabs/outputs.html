@@ -1,6 +1,6 @@
 <div class="tab-motors toolbar_fixed_bottom">
     <div class="content_wrapper">
-        <div class="tab_title" i18n="tabMotorTesting"></div>
+        <div class="tab_title" data-i18n="tabOutputs"></div>
 
         <div class="gui_box grey config-section">
             <div class="gui_box_titlebar">
@@ -45,12 +45,12 @@
                     <div class="clear-both"></div>
                 </div>
 
+                <div id="motor-stop-warning" data-i18n="motorStopWarning" class="warning-box"></div>
                 <div class="checkbox">
                     <input type="checkbox" data-bit="4" class="feature toggle" name="MOTOR_STOP" title="MOTOR_STOP" id="feature-4">
                     <label for="feature-4">
                         <span data-i18n="featureMOTOR_STOP"></span>
                     </label>
-                    <div class="helpicon cf_tip" data-i18n_title="featureMOTOR_STOPTip"></div>
                 </div>
 
                 <div id="throttle_idle-info" class="info-box"></div>
@@ -65,6 +65,13 @@
                     <input id="motor_poles" data-setting="motor_poles" type="number" />
                     <label for="motor_poles">
                         <span data-i18n="motor_poles"></span>
+                    </label>
+                </div>
+                <div id="reversible-esc-info" data-i18n="reversibleEscWarning" class="info-box"></div>
+                <div class="checkbox">
+                    <input type="checkbox" data-bit="12" class="feature toggle" name="REVERSIBLE_MOTORS" title="REVERSIBLE_MOTORS" id="feature-12">
+                    <label for="feature-12">
+                        <span data-i18n="featureREVERSIBLE_MOTORS"></span>
                     </label>
                 </div>
             </div>

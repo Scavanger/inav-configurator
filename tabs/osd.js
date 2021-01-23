@@ -18,6 +18,7 @@ SYM.AH_CENTER_LINE = 0x26;
 SYM.AH_CENTER_LINE_RIGHT = 0x27;
 SYM.AH_CENTER = 0x7E;
 SYM.AH_BAR9_0 = 0x80;
+SYM.AZIMUTH = 0x8D; // 141
 SYM.AH_DECORATION = 0x13;
 SYM.AMP = 0x9A;
 SYM.MAH = 0x07;
@@ -83,6 +84,16 @@ SYM.GFORCE_X = 0xE7;
 SYM.GFORCE_Y = 0xE8;
 SYM.GFORCE_Z = 0xE9;
 SYM.RPM = 0x8B;
+SYM.ESC_TEMPERATURE = 0xF3;
+SYM.RSS2 = 0xEA;
+SYM.DB = 0xEB;
+SYM.DBM = 0xEC;
+SYM.MW = 0xED;
+SYM.SNR = 0xEE;
+SYM.GVAR_1 = 0xEF;
+SYM.GVAR_2 = 0xF0;
+SYM.GVAR_3 = 0xF1;
+SYM.GVAR_4 = 0xF2;
 
 var FONT = FONT || {};
 
@@ -761,6 +772,11 @@ OSD.constants = {
                     id: 106,
                     min_version: '2.3.0',
                     preview: FONT.symbol(SYM.RPM) + '983',
+                },
+                {
+                    name: 'VERSION',
+                    id: 119,
+                    preview: 'INAV 2.7.0'
                 }
             ]
         },
@@ -789,6 +805,19 @@ OSD.constants = {
                         }
                         // Metric, UK
                         return FONT.symbol(SYM.BARO_TEMP) + ' 32' + FONT.symbol(SYM.TEMP_C);
+                    }
+                },
+                {
+                    name: 'ESC_TEMPERATURE',
+                    id: 107,
+                    min_version: '2.5.0',
+                    preview: function(osd_data) {
+                        if (OSD.data.preferences.units === 0) {
+                            // Imperial
+                            return FONT.symbol(SYM.ESC_TEMPERATURE) + ' 98' + FONT.symbol(SYM.TEMP_F);
+                        }
+                        // Metric, UK
+                        return FONT.symbol(SYM.ESC_TEMPERATURE) + ' 37' + FONT.symbol(SYM.TEMP_C);
                     }
                 },
                 {
@@ -1162,8 +1191,9 @@ OSD.constants = {
                     id: 97,
                     preview: function() {
                         let digits = parseInt(Settings.getInputValue('osd_plus_code_digits')) + 1;
+                        let digitsRemoved = parseInt(Settings.getInputValue('osd_plus_code_short')) * 2;
                         console.log("DITIS", digits);
-                        return '9547X6PM+VWCCC'.substr(0, digits);
+                        return '9547X6PM+VWCCC'.substr(digitsRemoved, digits-digitsRemoved);
                     }
                 },
                 {
@@ -1175,6 +1205,11 @@ OSD.constants = {
                     name: 'HOME_HEADING_ERROR',
                     id: 50,
                     preview: FONT.symbol(SYM.HOME) + FONT.symbol(SYM.HEADING) + ' -10' + FONT.symbol(SYM.DEGREES)
+                },
+                {
+                    name: 'AZIMUTH',
+                    id: 108,
+                    preview: FONT.symbol(SYM.AZIMUTH) + ' 20'
                 },
                 {
                     name: 'DISTANCE_TO_HOME',
@@ -1319,6 +1354,72 @@ OSD.constants = {
             ]
         },
         {
+            name: 'osdGroupCRSF',
+            items: [
+                {
+                    name: 'CRSF_RSSI_DBM',
+                    id: 109,
+                    positionable: true,
+                    preview: FONT.symbol(SYM.RSSI) + '-100' + FONT.symbol(SYM.DBM)
+                },
+                {
+                    name: 'CRSF_LQ',
+                    id: 110,
+                    positionable: true,
+                    preview: function(osd_data) {
+                    var crsflqformat;
+                    if (Settings.getInputValue('osd_crsf_lq_format') == 1) {
+                        crsflqformat = '2:100%';
+                    } else {
+                        crsflqformat = '  300%';
+                    }
+                    return crsflqformat;
+                    }
+                },
+                {
+                    name: 'CRSF_SNR_DB',
+                    id: 111,
+                    positionable: true,
+                    preview: FONT.symbol(SYM.SNR) + '-12' + FONT.symbol(SYM.DB)
+                },
+                {
+                    name: 'CRSF_TX_POWER',
+                    id: 112,
+                    positionable: true,
+                    preview: '  10' + FONT.symbol(SYM.MW)
+                },
+            ]
+        },
+        {
+            name: 'osdGroupGVars',
+            items: [
+                {
+                    name: 'GVAR_0',
+                    id: 113,
+                    positionable: true,
+                    preview: 'G0:01337'
+                },
+                {
+                    name: 'GVAR_1',
+                    id: 114,
+                    positionable: true,
+                    preview: 'G1:31415'
+                },
+                {
+                    name: 'GVAR_2',
+                    id: 115,
+                    positionable: true,
+                    preview: 'G2:01611'
+                },
+                {
+                    name: 'GVAR_3',
+                    id: 116,
+                    positionable: true,
+                    preview: 'G3:30126'
+                }
+            ]
+        },
+        {
             name: 'osdGroupPIDs',
             items: [
                 {
@@ -1445,6 +1546,16 @@ OSD.constants = {
                     name: 'FW_MIN_THROTTLE_DOWN_PITCH_ANGLE',
                     id: 77,
                     preview: '0TP  ' + FONT.embed_dot('4.5')
+                },
+                {
+                    name: 'THRUST_PID_ATTENUATION',
+                    id: 117,
+                    preview: 'TPA    0\nBP  1500'
+                },
+                {
+                    name: 'CONTROL_SMOOTHNESS',
+                    id: 118,
+                    preview: 'CTL S 3'
                 },
             ]
         },
@@ -1921,84 +2032,6 @@ OSD.GUI.updateUnits = function() {
     });
 };
 
-OSD.GUI.updateAlarms = function() {
-    // alarms
-    $('.alarms-container').show();
-    var $alarms = $('.alarms-container .settings').empty();
-    for (var kk = 0; kk < OSD.constants.ALL_ALARMS.length; kk++) {
-        var alarm = OSD.constants.ALL_ALARMS[kk];
-        if (alarm.min_version && !semver.gte(CONFIG.flightControllerVersion, alarm.min_version)) {
-            continue;
-        }
-        var value = OSD.data.alarms[alarm.field];
-        if (value === undefined || value === null) {
-            continue;
-        }
-        var label = chrome.i18n.getMessage('osdAlarm' + alarm.name);
-        if (alarm.unit) {
-            var unit = typeof alarm.unit === 'function' ? alarm.unit(OSD.data) : alarm.unit;
-            var suffix = chrome.i18n.getMessage(unit) || unit;
-            label += ' (' + suffix + ')';
-        }
-        var step = 1;
-        if (typeof alarm.step === 'function') {
-            step = alarm.step(OSD.data)
-        } else if (typeof alarm.step !== 'undefined') {
-            step = alarm.step;
-        }
-        var amin = 0;
-        if (typeof alarm.min === 'function') {
-            amin = alarm.min(OSD.data)
-        } else if (typeof alarm.min !== 'undefined') {
-            amin = alarm.min;
-        }
-        var amax = 0;
-        if (typeof alarm.max === 'function') {
-            amax = alarm.max(OSD.data)
-        } else if (typeof alarm.max !== 'undefined') {
-            amax = alarm.max;
-        }
-        var alarmInput = $('<input name="alarm" type="number" step="' + step + '" min="' + amin + '" max="' + amax + '"/>' + label + '</label>');
-        alarmInput.data('alarm', alarm);
-        if (typeof alarm.to_display === 'function') {
-            value = alarm.to_display(OSD.data, value);
-        }
-        alarmInput.val(value);
-        alarmInput.blur(function (e) {
-            var $alarm = $(this);
-            var val = $alarm.val();
-            var alarm = $alarm.data('alarm');
-            if (typeof alarm.from_display === 'function') {
-                val = alarm.from_display(OSD.data, val);
-            }
-            OSD.data.alarms[alarm.field] = val;
-            // We just need to save the config. The field is already
-            // up to date, since it's where the value was changed
-            // by the user.
-            OSD.saveAlarms();
-        });
-        var $input = $('<label/>');
-        var help = chrome.i18n.getMessage('osdAlarm' + alarm.name + '_HELP');
-        if (help) {
-            $('<div class="helpicon cf_tip"></div>')
-                .css('margin-top', '1px')
-                .attr('title', help)
-                .appendTo($input)
-                .jBox('Tooltip', {
-                    delayOpen: 100,
-                    delayClose: 100,
-                    position: {
-                        x: 'right',
-                        y: 'center'
-                    },
-                    outside: 'x'
-                });
-        }
-        $input.append(alarmInput);
-        $alarms.append($input);
-    }
-};
-
 OSD.GUI.updateFields = function() {
     // display fields on/off and position
     var $tmpl = $('#osd_group_template').hide();
@@ -2313,7 +2346,6 @@ OSD.GUI.updateAll = function() {
     $('.supported').fadeIn();
     OSD.GUI.updateVideoMode();
     OSD.GUI.updateUnits();
-    OSD.GUI.updateAlarms();
     OSD.GUI.updateFields();
     OSD.GUI.updatePreviews();
 };
@@ -2333,7 +2365,6 @@ OSD.GUI.saveItem = function(item) {
 OSD.GUI.saveConfig = function() {
     OSD.saveConfig(function() {
         OSD.GUI.updatePreviews();
-        OSD.GUI.updateAlarms();
     });
 };
 
@@ -2359,16 +2390,17 @@ TABS.osd.initialize = function (callback) {
             content: $('#fontmanagercontent')
         });
 
-
         $('a.save').click(function () {
-            var self = this;
-            MSP.promise(MSPCodes.MSP_EEPROM_WRITE);
-            GUI.log('OSD settings saved');
-            var oldText = $(this).text();
-            $(this).html("Saved");
-            setTimeout(function () {
-                $(self).html(oldText);
-            }, 2000);
+            Settings.saveInputs().then(function () {
+                var self = this;
+                MSP.promise(MSPCodes.MSP_EEPROM_WRITE);
+                GUI.log('OSD settings saved');
+                var oldText = $(this).text();
+                $(this).html("Saved");
+                setTimeout(function () {
+                    $(self).html(oldText);
+                }, 2000);
+            });
         });
 
         // font preview window
@@ -2521,7 +2553,7 @@ TABS.osd.cleanup = function (callback) {
     $(document).off('click', 'span.progressLabel a');
 
     delete OSD.GUI.jbox;
-    $('.jBox-wrapper').remove()
+    $('.jBox-wrapper').remove();
 
     if (callback) callback();
 };
