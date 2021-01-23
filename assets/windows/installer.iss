@@ -1,5 +1,5 @@
 ; ------------------------------------------
-; Installer for Betaflight Configurator
+; Installer for iNav Configurator
 ; ------------------------------------------
 ; It receives from the command line with /D the parameters: 
 ; version
