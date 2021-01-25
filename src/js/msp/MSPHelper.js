@@ -1679,11 +1679,11 @@ var mspHelper = (function (gui) {
                 buffer.push(highByte(Math.round(MISC.vbatmaxcellvoltage * 100)));
                 buffer.push(lowByte(Math.round(MISC.vbatwarningcellvoltage * 100)));
                 buffer.push(highByte(Math.round(MISC.vbatwarningcellvoltage * 100)));
-                for (byte_index = 0; byte_index < 4; ++byte_index)
+                for (let byte_index = 0; byte_index < 4; ++byte_index)
                     buffer.push(specificByte(MISC.battery_capacity, byte_index));
-                for (byte_index = 0; byte_index < 4; ++byte_index)
+                for (let byte_index = 0; byte_index < 4; ++byte_index)
                     buffer.push(specificByte(MISC.battery_capacity_warning, byte_index));
-                for (byte_index = 0; byte_index < 4; ++byte_index)
+                for (let byte_index = 0; byte_index < 4; ++byte_index)
                     buffer.push(specificByte(MISC.battery_capacity_critical, byte_index));
                 buffer.push((MISC.battery_capacity_unit == 'mAh') ? 0 : 1);
                 break;
@@ -1704,11 +1704,11 @@ var mspHelper = (function (gui) {
                 buffer.push(highByte(BATTERY_CONFIG.current_offset));
                 buffer.push(lowByte(BATTERY_CONFIG.current_scale));
                 buffer.push(highByte(BATTERY_CONFIG.current_scale));
-                for (byte_index = 0; byte_index < 4; ++byte_index)
+                for (let byte_index = 0; byte_index < 4; ++byte_index)
                     buffer.push(specificByte(BATTERY_CONFIG.capacity, byte_index));
-                for (byte_index = 0; byte_index < 4; ++byte_index)
+                for (let byte_index = 0; byte_index < 4; ++byte_index)
                     buffer.push(specificByte(BATTERY_CONFIG.capacity_warning, byte_index));
-                for (byte_index = 0; byte_index < 4; ++byte_index)
+                for (let byte_index = 0; byte_index < 4; ++byte_index)
                     buffer.push(specificByte(BATTERY_CONFIG.capacity_critical, byte_index));
                 buffer.push(BATTERY_CONFIG.capacity_unit);
                 break;

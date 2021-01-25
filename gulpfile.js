@@ -558,7 +558,7 @@ function release_deb(arch, appDirectory, done) {
     // Check if dpkg-deb exists
     if (!commandExistsSync('dpkg-deb')) {
         console.warn(`dpkg-deb command not found, not generating deb package for ${arch}`);
-        done();
+        return done();
     }
 
     return gulp.src([path.join(appDirectory, pkg.name, arch, '*')])
@@ -591,7 +591,7 @@ function release_rpm(arch, appDirectory, done) {
     // Check if dpkg-deb exists
     if (!commandExistsSync('rpmbuild')) {
         console.warn(`rpmbuild command not found, not generating rpm package for ${arch}`);
-        done();
+        return done();
     }
 
     // The buildRpm does not generate the folder correctly, manually
