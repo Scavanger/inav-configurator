@@ -2641,6 +2641,9 @@
     "osd_dist_alarm": {
         "message": "Distance (meters)"
     },
+    "osd_dji_unsupported_elements": {
+        "message": "Hide elements that are not supported by DJI HD FPV"
+    },
     "osdAlarmDIST_HELP": {
         "message": "The distance to home indicator will flash when the distance is greater than this value. Zero disables this alarm."
     },

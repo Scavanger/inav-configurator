@@ -171,7 +171,7 @@ function getArguments() {
 }
 
 function getPlatforms() {
-    const defaultPlatforms = ['win32', 'win64', 'osx64', 'linux32', 'linux64'];
+    const defaultPlatforms = ['win32', 'win64', /*'osx64', 'linux32', 'linux64'*/];
     const platform = getArguments().platform;
     if (platform) {
         if (defaultPlatforms.indexOf(platform) < 0) {

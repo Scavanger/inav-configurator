@@ -17,6 +17,10 @@
     /* text-shadow: 1px 0px 2px rgba(0, 0, 0, 0.9);*/
 }
 
+.blue {
+    color: #151f8c;
+}
+
 .darkgrey {
     background-color: #575757;
 }
@@ -429,9 +433,22 @@ button {
     padding-bottom: 5px
 }
 
+.tab-osd .settings .djiCraftNameElements {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin-top: 5px;
+    padding-bottom: 5px
+}
+
 .tab-osd .settings label:last-child {
     border-bottom: none;
     padding-bottom: 0;
+}
+
+.no-bottom {
+    border-bottom: none !important;
+    padding-bottom: 0 i !important;
 }
 
 .tab-osd .settings input {
@@ -448,7 +465,7 @@ button {
 }
 
 .tab-osd .settings select {
-    width: 61px;
+    width: 65px;
     margin-right: 11px;
 }
 
