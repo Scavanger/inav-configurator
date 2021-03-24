@@ -2255,8 +2255,8 @@ OSD.GUI.updateDjiMessageElements = function(on) {
     OSD.GUI.removeBottomLines();
 };
 
-OSD.GUI.updateDjiView = function() {
-    if (OSD.data.isDjiHdFpv) {
+OSD.GUI.updateDjiView = function(on) {
+    if (on) {
         $(OSD.DjiElements.emptyGroups).each(function(index, groupName) {
             $('#osdGroup' + groupName).hide();    
         });
@@ -2499,7 +2499,7 @@ OSD.GUI.updateAll = function() {
     OSD.GUI.updateUnits();
     OSD.GUI.updateFields();
     OSD.GUI.updatePreviews();
-    OSD.GUI.updateDjiView();
+    OSD.GUI.updateDjiView(OSD.data.isDjiHdFpv);
 };
 
 OSD.GUI.update = function() {
