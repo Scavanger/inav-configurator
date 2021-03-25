@@ -492,7 +492,7 @@ OSD.DjiElements =  {
         "MESSAGES",
         "THROTTLE_POSITION",
         "THROTTLE_POSITION_AUTO_THR",
-        "AIR_SPEED",
+        "3D_SPEED",
         "EFFICIENCY_MAH",
         "TRIP_DIST"
     ]   
