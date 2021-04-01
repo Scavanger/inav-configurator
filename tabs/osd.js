@@ -2169,7 +2169,7 @@ OSD.GUI.updateFields = function() {
                         var itemData = OSD.data.items[item.id];
                         var $position = $(this).parent().find('.position.' + item.name);
                         itemData.isVisible = !itemData.isVisible;
-
+                    
                         if (itemData.isVisible) {
                             // Ensure the element is inside the viewport, at least partially.
                             // In that case move it to the very first row/col, otherwise there's
@@ -2210,6 +2210,7 @@ OSD.GUI.updateFields = function() {
         .attr('checked', OSD.data.isDjiHdFpv) 
         .on('change', function () {
             OSD.GUI.updateDjiView(this.checked);
+            OSD.GUI.updatePreviews();
         })
      );             
 
@@ -2246,10 +2247,10 @@ OSD.GUI.updateDjiMessageElements = function(on) {
             } else if ($('#djiUnsupportedElements').find('input').is(':checked')) {
                 $(element).hide();
             } 
-
-            if (!on) {
-                $(element).removeClass('blue');
-            }
+        }
+        
+        if (!on) {
+            $(element).removeClass('blue');
         }
     });
     OSD.GUI.removeBottomLines();
@@ -2284,8 +2285,6 @@ OSD.GUI.updateDjiView = function(on) {
                 $(element).hide();
             }
         });
-
-        OSD.GUI.updateDjiMessageElements($('#useCraftnameForMessages').is(':checked'));
     } else {
         $(OSD.DjiElements.emptyGroups).each(function(index, groupName) {
             $('#osdGroup' + groupName).show();    
@@ -2299,6 +2298,7 @@ OSD.GUI.updateDjiView = function(on) {
             .show()
             .removeClass('no-bottom');
     }
+    OSD.GUI.updateDjiMessageElements($('#useCraftnameForMessages').is(':checked'));
 };
 
 OSD.GUI.updateMapPreview = function(mapCenter, name, directionSymbol, centerSymbol) {
@@ -2335,6 +2335,13 @@ OSD.GUI.updatePreviews = function() {
         if (!itemData.isVisible) {
             continue;
         }
+
+        // DJI HD FPV: Hide elements that only appear in craft name
+        if (OSD.DjiElements.craftNameElements.includes(item.name) &&
+        $('#djiUnsupportedElements').find('input').is(':checked')) {
+            continue;
+        }
+
         var j = (itemData.position >= 0) ? itemData.position : itemData.position + OSD.data.display_size.total;
         // create the preview image
         item.preview_img = new Image();
