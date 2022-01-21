@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "minimum_chrome_version": "38",
-    "version": "4.0.0",
+    "version": "5.0.0",
     "author": "Several",
     "name": "INAV - Configurator",
     "short_name": "INAV",
@@ -31,11 +31,13 @@
         "https://dev.virtualearth.net/",
         "serial",
         "usb",
+        "bluetooth",
         "storage",
         "fileSystem",
         "fileSystem.write",
         "fileSystem.retainEntries",
         "notifications",
+        "experimental",
         "alwaysOnTopWindows",
         {"usbDevices": [
             {"vendorId": 1155, "productId": 57105}
