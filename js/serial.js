@@ -2,7 +2,13 @@
 
 /*global chrome*/
 
+const serialType = {
+    COM: 0,
+    BLE: 1
+}
+
 var serial = {
+    serialType:      serialType.COM,
     connectionId:    false,
     openRequested:   false,
     openCanceled:    false,
@@ -18,111 +24,9 @@ var serial = {
         var self = this;
         self.openRequested = true;
 
-        chrome.serial.connect(path, options, function (connectionInfo) {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError.message);
-            }
-
-            if (connectionInfo && !self.openCanceled) {
-                self.connectionId = connectionInfo.connectionId;
-                self.bitrate = connectionInfo.bitrate;
-                self.bytesReceived = 0;
-                self.bytesSent = 0;
-                self.failed = 0;
-                self.openRequested = false;
-
-                self.onReceive.addListener(function log_bytesReceived(info) {
-                    self.bytesReceived += info.data.byteLength;
-                });
-
-                self.onReceiveError.addListener(function watch_for_on_receive_errors(info) {
-                    console.error(info);
-                    googleAnalytics.sendException('Serial: ' + info.error, false);
-
-                    switch (info.error) {
-                        case 'system_error': // we might be able to recover from this one
-                            if (!self.failed++) {
-                                chrome.serial.setPaused(self.connectionId, false, function () {
-                                    self.getInfo(function (info) {
-                                        if (info) {
-                                            if (!info.paused) {
-                                                console.log('SERIAL: Connection recovered from last onReceiveError');
-                                                googleAnalytics.sendException('Serial: onReceiveError - recovered', false);
-
-                                                self.failed = 0;
-                                            } else {
-                                                console.log('SERIAL: Connection did not recover from last onReceiveError, disconnecting');
-                                                GUI.log('Unrecoverable <span style="color: red">failure</span> of serial connection, disconnecting...');
-                                                googleAnalytics.sendException('Serial: onReceiveError - unrecoverable', false);
-
-                                                if (GUI.connected_to || GUI.connecting_to) {
-                                                    $('a.connect').click();
-                                                } else {
-                                                    self.disconnect();
-                                                }
-                                            }
-                                        } else {
-                                            if (chrome.runtime.lastError) {
-                                                console.error(chrome.runtime.lastError.message);
-                                            }
-                                        }
-                                    });
-                                });
-                            }
-                            break;
-
-                        case 'break': // This occurs on F1 boards with old firmware during reboot
-                        case 'overrun':
-                        case 'frame_error': //Got disconnected
-                            // wait 50 ms and attempt recovery
-                            self.error = info.error;
-                            setTimeout(function() {
-                                chrome.serial.setPaused(info.connectionId, false, function() {
-                                    self.getInfo(function (info) {
-                                        if (info) {
-                                            if (info.paused) {
-                                                // assume unrecoverable, disconnect
-                                                console.log('SERIAL: Connection did not recover from ' + self.error + ' condition, disconnecting');
-                                                GUI.log('Unrecoverable <span style="color: red">failure</span> of serial connection, disconnecting...');
-                                                googleAnalytics.sendException('Serial: ' + self.error + ' - unrecoverable', false);
-    
-                                                if (GUI.connected_to || GUI.connecting_to) {
-                                                    $('a.connect').click();
-                                                } else {
-                                                    self.disconnect();
-                                                }
-                                            }
-                                            else {
-                                                console.log('SERIAL: Connection recovered from ' + self.error + ' condition');
-                                                googleAnalytics.sendException('Serial: ' + self.error + ' - recovered', false);
-                                            }
-                                        }
-                                    });
-                                });
-                            }, 50);
-                            break;
-                            
-                        case 'timeout':
-                            // TODO
-                            break;
-                            
-                        case 'device_lost':
-                            if (GUI.connected_to || GUI.connecting_to) {
-                                $('a.connect').click();
-                            } else {
-                                self.disconnect();
-                            }
-                            break;
-                            
-                        case 'disconnected':
-                            // TODO
-                            break;
-                    }
-                });
-
-                console.log('SERIAL: Connection opened with ID: ' + connectionInfo.connectionId + ', Baud: ' + connectionInfo.bitrate);
-
-                if (callback) callback(connectionInfo);
+        function connectPost(connectionInfo) {
+            if (connectionInfo && callback) { 
+                callback(connectionInfo);
             } else if (connectionInfo && self.openCanceled) {
                 // connection opened, but this connect sequence was canceled
                 // we will disconnect without triggering any callbacks
@@ -149,11 +53,22 @@ var serial = {
                 googleAnalytics.sendException('Serial: FailedToOpen', false);
                 if (callback) callback(false);
             }
-        });
+        }
+
+        switch (this.serialType) {
+            case serialType.COM: 
+                serialCom.connect(path, options, connectPost);
+                serialCom.registerOnRecieveCallback();
+                break;
+            case serialType.BLE:
+                serialBle.connect(connectPost);
+                break;
+            default:
+                break;
+        }
     },
     disconnect: function (callback) {
         var self = this;
-
         if (self.connectionId) {
             self.emptyOutputBuffer();
 
@@ -165,24 +80,24 @@ var serial = {
             for (var i = (self.onReceiveError.listeners.length - 1); i >= 0; i--) {
                 self.onReceiveError.removeListener(self.onReceiveError.listeners[i]);
             }
+            
+            var func = false;
+            if (this.serialType == serialType.COM) {
+                func = serialCom.disconnect;
+            } else if (this.serialType == serialType.BLE) {
+                func = serialBle.disconnect;
+            }
 
-            chrome.serial.disconnect(this.connectionId, function (result) {
-                if (chrome.runtime.lastError) {
-                    console.error(chrome.runtime.lastError.message);
-                }
-
-                if (result) {
-                    console.log('SERIAL: Connection with ID: ' + self.connectionId + ' closed, Sent: ' + self.bytesSent + ' bytes, Received: ' + self.bytesReceived + ' bytes');
-                } else {
-                    console.log('SERIAL: Failed to close connection with ID: ' + self.connectionId + ' closed, Sent: ' + self.bytesSent + ' bytes, Received: ' + self.bytesReceived + ' bytes');
-                    googleAnalytics.sendException('Serial: FailedToClose', false);
-                }
-
-                self.connectionId = false;
-                self.bitrate = 0;
-
-                if (callback) callback(result);
-            });
+            if (func) {
+                func(function(result) {
+                    if (callback) callback(result);
+                });
+            }
+            
+            self.connectionId = false;
+            self.bitrate = 0
+            
+            
         } else {
             // connection wasn't opened, so we won't try to close anything
             // instead we will rise canceled flag which will prevent connect from continueing further after being canceled
@@ -217,7 +132,19 @@ var serial = {
             var data = self.outputBuffer[0].data,
                 callback = self.outputBuffer[0].callback;
 
-            chrome.serial.send(self.connectionId, data, function (sendInfo) {
+            var sendFunc;
+            switch (self.serialType) {
+                case serialType.COM: 
+                    sendFunc = serialCom.send;
+                    break;
+                case serialType.BLE:
+                    sendFunc = serialBle.send;
+                    break;
+                default:
+                    return;
+            }
+
+            sendFunc(self.connectionId, data, function (sendInfo) {
                 // track sent bytes for statistics
                 self.bytesSent += sendInfo.bytesSent;
 
@@ -256,15 +183,23 @@ var serial = {
     onReceive: {
         listeners: [],
 
-        addListener: function (function_reference) {
-            chrome.serial.onReceive.addListener(function_reference);
+        register: function(registerFunction) {
+            registerFunction(this.mainListener);
+        },
+        
+        mainListener: function(info) {
+            for (var i = (serial.onReceive.listeners.length - 1); i >= 0; i--) {
+                serial.onReceive.listeners[i](info);
+            }
+        },
+
+        addListener: function (function_reference) {         
             this.listeners.push(function_reference);
         },
+
         removeListener: function (function_reference) {
             for (var i = (this.listeners.length - 1); i >= 0; i--) {
                 if (this.listeners[i] == function_reference) {
-                    chrome.serial.onReceive.removeListener(function_reference);
-
                     this.listeners.splice(i, 1);
                     break;
                 }
@@ -302,7 +237,7 @@ var serial = {
         if (serial.bitrate >= 57600) {
             return 3000;
         } else {
-            return 4000;
+            return 6000;
         }
     }
 

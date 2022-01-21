@@ -31,11 +31,13 @@
         "https://dev.virtualearth.net/",
         "serial",
         "usb",
+        "bluetooth",
         "storage",
         "fileSystem",
         "fileSystem.write",
         "fileSystem.retainEntries",
         "notifications",
+        "experimental",
         "alwaysOnTopWindows",
         {"usbDevices": [
             {"vendorId": 1155, "productId": 57105}

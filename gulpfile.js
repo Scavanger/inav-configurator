@@ -86,6 +86,9 @@ sources.js = [
     './js/msp/MSPHelper.js',
     './js/msp/MSPchainer.js',
     './js/port_handler.js',
+    './js/libraries/plotly-latest.min.js',
+    './js/serial_com.js',
+    './js/serial_ble.js',
     './js/serial.js',
     './js/servoMixRule.js',
     './js/motorMixRule.js',
@@ -126,8 +129,7 @@ sources.js = [
     './js/safehome.js',
     './js/waypointCollection.js',
     './js/waypoint.js',
-    './node_modules/openlayers/dist/ol.js',
-    './js/libraries/plotly-latest.min.js'
+    './node_modules/openlayers/dist/ol.js'
 ];
 
 sources.receiverCss = [

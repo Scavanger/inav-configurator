@@ -181,7 +181,6 @@ var MSP = {
                 case this.decoder_states.PAYLOAD_V2:
                     this.message_buffer_uint8_view[this.message_length_received] = data[i];
                     this.message_length_received++;
-
                     if (this.message_length_received >= this.message_length_expected) {
                         this.state = this.state == this.decoder_states.PAYLOAD_V1 ?
                             this.decoder_states.CHECKSUM_V1 :

@@ -1515,7 +1515,9 @@ var mspHelper = (function (gui) {
             case MSPCodes.MSP2_INAV_SET_SAFEHOME:
                 console.log('Safehome points saved');
                 break;
-
+            case MSPCodes.MSP2_INAV_SEND_CHUNK_SIZE:
+                console.log('Set MSP chunk length.');
+                break;
             default:
                 console.log('Unknown code detected: ' + dataHandler.code);
         } else {
@@ -3330,6 +3332,13 @@ var mspHelper = (function (gui) {
             callback();
         }
     };
+
+    self.setFC_MSPChunkSize = function (callback) {
+        let buffer = [];
+        buffer.push(lowByte(BLE_SEND_CHUNK_SIZE));
+        buffer.push(highByte(BLE_SEND_CHUNK_SIZE));
+        MSP.send_message(MSPCodes.MSP2_INAV_SEND_CHUNK_SIZE, buffer, callback, false, MSP.constants.PROTOCOL_V2);
+    }
 
     return self;
 })(GUI);
