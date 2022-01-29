@@ -1,7 +1,5 @@
 'use strict';
 
-/*global chrome*/
-
 const serialType = {
     COM: 0,
     BLE: 1
@@ -104,25 +102,23 @@ var serial = {
             self.openCanceled = true;
         }
     },
+    
     getDevices: function (callback) {
-        chrome.serial.getDevices(function (devices_array) {
-            var devices = [];
-            devices_array.forEach(function (device) {
-                devices.push(device.path);
-            });
+        serialCom.getDevices(callback);
+    },
 
-            callback(devices);
-        });
-    },
     getInfo: function (callback) {
-        chrome.serial.getInfo(this.connectionId, callback);
+        serialCom.getInfo(this.connectionId, callback);
     },
+
     getControlSignals: function (callback) {
-        chrome.serial.getControlSignals(this.connectionId, callback);
+        serialCom.getControlSignals(this.connectionId, callback);
     },
+
     setControlSignals: function (signals, callback) {
-        chrome.serial.setControlSignals(this.connectionId, signals, callback);
+        serialCom.setControlSignals(this.connectionId, signals, callback);
     },
+
     send: function (data, callback) {
         var self = this;
         this.outputBuffer.push({'data': data, 'callback': callback});
@@ -210,13 +206,13 @@ var serial = {
         listeners: [],
 
         addListener: function (function_reference) {
-            chrome.serial.onReceiveError.addListener(function_reference);
+            serialCom.addReceiveErrorListener(function_reference);
             this.listeners.push(function_reference);
         },
         removeListener: function (function_reference) {
             for (var i = (this.listeners.length - 1); i >= 0; i--) {
                 if (this.listeners[i] == function_reference) {
-                    chrome.serial.onReceiveError.removeListener(function_reference);
+                    serialCom.removeReceiveErrorListener(function_reference);
 
                     this.listeners.splice(i, 1);
                     break;
@@ -224,6 +220,7 @@ var serial = {
             }
         }
     },
+
     emptyOutputBuffer: function () {
         this.outputBuffer = [];
         this.transmitting = false;

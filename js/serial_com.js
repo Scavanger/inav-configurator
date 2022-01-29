@@ -127,16 +127,47 @@ var serialCom = {
             funcRef(result);
         });
     },
+    
+    getDevices: function (callback) {
+        chrome.serial.getDevices(function (devices_array) {
+            var devices = [];
+            devices_array.forEach(function (device) {
+                devices.push(device.path);
+            });
 
-    registerOnRecieveCallback: function() {
-        serial.onReceive.register(function(listener){
-            chrome.serial.onReceive.addListener(listener)
+            callback(devices);
         });
+    },
+    
+    getInfo: function (connectionId, callback) {
+        chrome.serial.getInfo(connectionId, callback);
+    },
+
+    getControlSignals: function (connectionId, callback) {
+        chrome.serial.getControlSignals(connectionId, callback);
+    },
+
+    setControlSignals: function (connectionId, signals, callback) {
+        chrome.serial.setControlSignals(connectionId, signals, callback);
     },
 
     send: function(id, data, callback) {;
         chrome.serial.send(id, data, function (sendInfo) {
            callback(sendInfo);
         });
+    },
+
+    registerOnRecieveCallback: function() {
+            serial.onReceive.register(function(listener){
+                chrome.serial.onReceive.addListener(listener)
+            });
+        },
+
+    addReceiveErrorListener: function(funcRef) {
+        chrome.serial.onReceiveError.addListener(funcRef);   
+    },
+
+    removeReceiveErrorListener: function(funcRef) {
+        chrome.serial.onReceiveError.removeListener(funcRef);  
     }
 }

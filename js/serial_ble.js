@@ -14,24 +14,32 @@ var serialBle = {
             serviceUuid:        '0000ffe0-0000-1000-8000-00805f9b34fb',
             writeCharateristic: '0000ffe1-0000-1000-8000-00805f9b34fb', 
             readCharateristic:  '0000ffe1-0000-1000-8000-00805f9b34fb',
+            delay:              70,
+            chunkSize:          180,
         },
         {
             name: "Nordic Semiconductor NRF",
             serviceUuid:        '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
             writeCharateristic: '6e400003-b5a3-f393-e0a9-e50e24dcca9e', 
             readCharateristic:  '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
+            delay:              70,
+            chunkSize:          180,
         },
         {
             name: "SpeedyBee Type 2",
             serviceUuid:        '0000abf0-0000-1000-8000-00805f9b34fb',
             writeCharateristic: '0000abf1-0000-1000-8000-00805f9b34fb', 
             readCharateristic:  '0000abf2-0000-1000-8000-00805f9b34fb',
+            delay:              10,
+            chunkSize:          0,
         },
         {
             name: "SpeedyBee Type 1",
             serviceUuid:        '00001000-0000-1000-8000-00805f9b34fb',
             writeCharateristic: '00001001-0000-1000-8000-00805f9b34fb', 
             readCharateristic:  '00001002-0000-1000-8000-00805f9b34fb',
+            delay:              10,
+            chunkSize:          0,
         }
     ],
 
@@ -106,8 +114,8 @@ var serialBle = {
         }
         return device.gatt.connect()
             .then(server => {
-                console.log("Connected to BLE device: " + device.name);
-                GUI.log("Connected to BLE device: " + device.name)    
+                console.log("Connect to: " + device.name);
+                GUI.log("Connect to: " + device.name)    
                 return server.getPrimaryServices();
             }).then(services => {
                 let connectedService = services.find(service => {
@@ -119,7 +127,7 @@ var serialBle = {
                 if (!this.deviceDescription) {
                     throw new Error("Unsupported device (service uuid mismatch). Got " + service.uuid);
                 }
-                GUI.log("Connected through " + this.deviceDescription.name);
+                GUI.log("BLE device type:  " + this.deviceDescription.name);
                 return connectedService.getCharacteristics();
             }).then(characteristics => {
                 characteristics.find(characteristic => {

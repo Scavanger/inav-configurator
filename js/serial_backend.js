@@ -305,7 +305,7 @@ function onOpen(openInfo) {
                                     if (semver.lt(CONFIG.apiVersion, "2.5.0")) {
                                         onBleNotSupported();
                                     } else {
-                                        mspHelper.setFC_MSPChunkSize();
+                                        mspHelper.setMSP_Options();
                                     }
                                 }
                                 if (name) {
