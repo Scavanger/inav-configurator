@@ -228,5 +228,5 @@ var MSPCodes = {
     
     MSP2_INAV_SAFEHOME:                 0x2038,
     MSP2_INAV_SET_SAFEHOME:             0x2039,
-    MSP2_INAV_SEND_CHUNK_SIZE:          0x203B
+    MSP2_INAV_SET_MSP_OPTIONS:          0x203B
 };
