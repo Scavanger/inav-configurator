@@ -89,6 +89,8 @@ sources.js = [
     './js/serial.js',
     './js/serial_com.js',
     './js/serial_ble.js',
+    './js/serial_tcp.js',
+    './js/serial_udp.js',
     './js/servoMixRule.js',
     './js/motorMixRule.js',
     './js/logicCondition.js',

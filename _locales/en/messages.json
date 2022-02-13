@@ -138,16 +138,16 @@
     },
 
     "serialPortOpened": {
-        "message": "Serial port <span style=\"color: #37a8db\">successfully</span> opened with ID: $1"
+        "message": "MSP connection <span style=\"color: #37a8db\">successfully</span> opened with ID: $1"
     },
     "serialPortOpenFail": {
         "message": "<span style=\"color: red\">Failed</span> to open serial port"
     },
     "serialPortClosedOk": {
-        "message": "Serial port <span style=\"color: #37a8db\">successfully</span> closed"
+        "message": "MSP connectiont <span style=\"color: #37a8db\">successfully</span> closed"
     },
     "serialPortClosedFail": {
-        "message": "<span style=\"color: red\">Failed</span> to close serial port"
+        "message": "<span style=\"color: red\">Failed</span> to close MSP connection"
     },
 
     "usbDeviceOpened": {

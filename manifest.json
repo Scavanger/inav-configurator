@@ -21,7 +21,14 @@
     "sandbox": {
     "pages": ["tabs/map.html"]
     },
-         
+    
+    "sockets": {
+        "udp": {
+            "send": ["*"],
+            "bind": ["*"]
+        }
+    },
+
     "permissions": [
         "https://www.google-analytics.com/",
         "https://maps.googleapis.com/*",    

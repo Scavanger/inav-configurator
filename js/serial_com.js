@@ -124,6 +124,7 @@ var serialCom = {
                 console.log('SERIAL: Failed to close connection with ID: ' + serial.connectionId + ' closed, Sent: ' + serial.bytesSent + ' bytes, Received: ' + serial.bytesReceived + ' bytes');
                 googleAnalytics.sendException('Serial: FailedToClose', false);
             }
+            self.connectionId = false;
             funcRef(result);
         });
     },

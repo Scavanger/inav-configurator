@@ -66,7 +66,7 @@ PortHandler.check = function () {
                 chrome.storage.local.get('last_used_port', function (result) {
                     // if last_used_port was set, we try to select it
                     if (result.last_used_port) {
-                        if (result.last_used_port == "ble") {
+                        if (result.last_used_port == "ble" || result.last_used_port == "tcp" || result.last_used_port == "udp") {
                             $('#port').val(result.last_used_port);
                         } else {
                             current_ports.forEach(function(port) {
@@ -180,6 +180,8 @@ PortHandler.update_port_select = function (ports) {
 
     $('div#port-picker #port').append($("<option/>", {value: 'manual', text: 'Manual Selection', data: {isManual: true}}));
     $('div#port-picker #port').append($("<option/>", {value: 'ble', text: 'BLE', data: {isBle: true}}));
+    $('div#port-picker #port').append($("<option/>", {value: 'tcp', text: 'TCP', data: {isTcp: true}}));
+    $('div#port-picker #port').append($("<option/>", {value: 'udp', text: 'UDP', data: {isUdp: true}}));
 };
 
 PortHandler.port_detected = function(name, code, timeout, ignore_timeout) {

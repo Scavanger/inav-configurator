@@ -1,8 +1,12 @@
 'use strict';
 
+const { series } = require("gulp");
+
 const serialType = {
     COM: 0,
-    BLE: 1
+    BLE: 1,
+    TCP: 2,
+    UDP: 3
 }
 
 var serial = {
@@ -61,6 +65,12 @@ var serial = {
             case serialType.BLE:
                 serialBle.connect(connectPost);
                 break;
+            case serialType.TCP:
+                serialTCP.connect(path, connectPost);    
+                break;
+            case serialType.UDP:
+                serialUDP.connect(path, connectPost);    
+                break;
             default:
                 break;
         }
@@ -84,16 +94,20 @@ var serial = {
                 func = serialCom.disconnect;
             } else if (this.serialType == serialType.BLE) {
                 func = serialBle.disconnect;
+            } else if (this.serialType == serialType.TCP) {
+                func = serialTCP.disconnect;
+            } else if (this.serialType == serialType.UDP) {
+                func = serialUDP.disconnect;
             }
-
             if (func) {
                 func(function(result) {
-                    if (callback) callback(result);
+                    if (callback) {
+                        callback(result);
+                    }
                 });
             }
             
-            self.connectionId = false;
-            self.bitrate = 0
+            self.bitrate = 0;
             
             
         } else {
@@ -136,6 +150,12 @@ var serial = {
                 case serialType.BLE:
                     sendFunc = serialBle.send;
                     break;
+                case serialType.TCP:
+                    sendFunc = serialTCP.send;
+                    break;
+                case serialType.UDP:
+                        sendFunc = serialUDP.send;
+                        break;
                 default:
                     return;
             }

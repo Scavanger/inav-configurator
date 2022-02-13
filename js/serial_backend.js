@@ -76,13 +76,20 @@ $(document).ready(function () {
 
     GUI.updateManualPortVisibility = function(){
         var selected_port = $port.find('option:selected');
-        if (selected_port.data().isManual) {
+        if (selected_port.data().isManual || selected_port.data().isTcp || selected_port.data().isUdp) {
             $('#port-override-option').show();
         }
         else {
             $('#port-override-option').hide();
         }
-        if (selected_port.data().isDFU || selected_port.data().isBle) {
+
+        if (selected_port.data().isTcp || selected_port.data().isUdp) {
+            $('#port-override-label').text("IP:Port");
+        } else {
+            $('#port-override-label').text("Port");
+        }
+
+        if (selected_port.data().isDFU || selected_port.data().isBle || selected_port.data().isTcp || selected_port.data().isUdp) {
             $baud.hide();
         }
         else {
@@ -90,7 +97,11 @@ $(document).ready(function () {
         }
         if (selected_port.data().isBle) {
             serial.serialType = serialType.BLE;
-        } else {
+        } else if (selected_port.data().isTcp) {
+            serial.serialType = serialType.TCP;
+        } else if (selected_port.data().isUdp) {
+            serial.serialType = serialType.UDP;
+        } else{
             serial.serialType = serialType.COM;
         }
     };
@@ -117,6 +128,7 @@ $(document).ready(function () {
             var selected_port = $port.find('option:selected').data().isManual ?
                     $portOverride.val() :
                     String($port.val());
+            
             if (selected_port === 'DFU') {
                 GUI.log(chrome.i18n.getMessage('dfu_connect_message'));
             }
@@ -129,7 +141,11 @@ $(document).ready(function () {
                     $('#port, #baud, #delay').prop('disabled', true);
                     $('div.connect_controls a.connect_state').text(chrome.i18n.getMessage('connecting'));
 
-                    serial.connect(selected_port, {bitrate: selected_baud}, onOpen);
+                    if (selected_port == 'tcp' || selected_port == 'udp') {
+                        serial.connect($portOverride.val(), {}, onOpen);
+                    } else {
+                        serial.connect(selected_port, {bitrate: selected_baud}, onOpen);
+                    }
                 } else {
                     var wasConnected = CONFIGURATOR.connectionValid;
 
@@ -279,7 +295,7 @@ function onOpen(openInfo) {
             if (!CONFIGURATOR.connectionValid) {
                 GUI.log(chrome.i18n.getMessage('noConfigurationReceived'));
 
-                $('div.connect_controls ').click(); // disconnect
+                $('a.connect').click(); // disconnect
             }
         }, 10000);
 
