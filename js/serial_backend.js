@@ -361,12 +361,6 @@ function onOpen(openInfo) {
                 }
             });
         });
-
-
-
-        // Request
-        
-
     } else {
         console.log('Failed to open serial port');
         GUI.log(chrome.i18n.getMessage('serialPortOpenFail'));
@@ -383,7 +377,6 @@ function onOpen(openInfo) {
         $connectButton.find('.connect').data("clicks", false);
     }
 }
-
 
 function onConnect() {
     helper.timeout.remove('connecting'); // kill connecting timer
