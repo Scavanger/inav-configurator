@@ -1463,9 +1463,7 @@ var mspHelper = (function (gui) {
             case MSPCodes.MSP2_INAV_SET_SAFEHOME:
                 console.log('Safehome points saved');
                 break;
-            case MSPCodes.MSP2_INAV_SET_MSP_OPTIONS:
-                console.log('Set MSP options');
-                break;
+
             default:
                 console.log('Unknown code detected: ' + dataHandler.code);
         } else {
@@ -3257,16 +3255,6 @@ var mspHelper = (function (gui) {
         MSP.send_message(MSPCodes.MSP2_INAV_PROGRAMMING_PID_STATUS, false, false, callback);
     };
 
-    self.setMSP_Options = function (callback) {
-        let buffer = [];
-        let delay = CONFIGURATOR.connection.deviceDescription.delay;
-        let chunkSize = CONFIGURATOR.connection.deviceDescription.chunkSize;
-        buffer.push(lowByte(chunkSize));
-        buffer.push(highByte(chunkSize));
-        buffer.push(lowByte(delay));
-        buffer.push(highByte(delay));
-        MSP.send_message(MSPCodes.MSP2_INAV_SET_MSP_OPTIONS, buffer, callback, false, MSP.constants.PROTOCOL_V2);
-    }
 
     return self;
 })(GUI);
