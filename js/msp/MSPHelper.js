@@ -463,22 +463,33 @@ var mspHelper = (function (gui) {
                 console.log("Servo mix saved");
                 break;
             case MSPCodes.MSP2_INAV_LOGIC_CONDITIONS:
-                LOGIC_CONDITIONS.flush();
-                if (data.byteLength % 14 === 0) {
-                    for (i = 0; i < data.byteLength; i += 14) {
-                        LOGIC_CONDITIONS.put(new LogicCondition(
-                            data.getInt8(i),
-                            data.getInt8(i + 1),
-                            data.getUint8(i + 2),
-                            data.getUint8(i + 3),
-                            data.getInt32(i + 4, true),
-                            data.getUint8(i + 8),
-                            data.getInt32(i + 9, true),
-                            data.getInt8(i + 13)
-                        ));
+                if (semver.gte(CONFIG.flightControllerVersion, "5.0.0")) {  
+                    LOGIC_CONDITIONS.put(new LogicCondition(
+                        data.getInt8(0),
+                        data.getInt8(1),
+                        data.getUint8(2),
+                        data.getUint8(3),
+                        data.getInt32(4, true),
+                        data.getUint8(8),
+                        data.getInt32(9, true),
+                        data.getInt8(13)
+                    ));
+                } else {
+                    if (data.byteLength % 14 === 0) {
+                        for (i = 0; i < data.byteLength; i += 14) {
+                            LOGIC_CONDITIONS.put(new LogicCondition(
+                                data.getInt8(i),
+                                data.getInt8(i + 1),
+                                data.getUint8(i + 2),
+                                data.getUint8(i + 3),
+                                data.getInt32(i + 4, true),
+                                data.getUint8(i + 8),
+                                data.getInt32(i + 9, true),
+                                data.getInt8(i + 13)
+                            ));
+                        }
                     }
                 }
-
                 break;
 
             case MSPCodes.MSP2_INAV_LOGIC_CONDITIONS_STATUS:
@@ -2260,7 +2271,23 @@ var mspHelper = (function (gui) {
     };
 
     self.loadLogicConditions = function (callback) {
-        MSP.send_message(MSPCodes.MSP2_INAV_LOGIC_CONDITIONS, false, false, callback);
+        LOGIC_CONDITIONS.flush();
+        
+        if (semver.gte(CONFIG.flightControllerVersion, "5.0.0")) {        
+            let idx = 0;
+            MSP.send_message(MSPCodes.MSP2_INAV_LOGIC_CONDITIONS, [idx], false, nextLogicCondition);
+
+            function nextLogicCondition() {
+                idx++;
+                if (idx < LOGIC_CONDITIONS.getMaxLogicConditionCount() - 1) {
+                    MSP.send_message(MSPCodes.MSP2_INAV_LOGIC_CONDITIONS, [idx], false, nextLogicCondition);
+                } else {
+                    MSP.send_message(MSPCodes.MSP2_INAV_LOGIC_CONDITIONS, [idx], false, callback);
+                }
+            }
+        } else {
+            MSP.send_message(MSPCodes.MSP2_INAV_LOGIC_CONDITIONS, false, false, callback);
+        }
     }
 
     self.sendLogicConditions = function (onCompleteCallback) {
@@ -3231,8 +3258,8 @@ var mspHelper = (function (gui) {
 
     self.setMSP_Options = function (callback) {
         let buffer = [];
-        let delay = serialBle.deviceDescription.delay;
-        let chunkSize = serialBle.deviceDescription.chunkSize;
+        let delay = CONFIGURATOR.connection.deviceDescription.delay;
+        let chunkSize = CONFIGURATOR.connection.deviceDescription.chunkSize;
         buffer.push(lowByte(chunkSize));
         buffer.push(highByte(chunkSize));
         buffer.push(lowByte(delay));

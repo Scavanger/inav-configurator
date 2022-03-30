@@ -294,9 +294,22 @@ TABS.cli.initialize = function (callback) {
 
             bufView[0] = 0x23; // #
 
-            serial.send(bufferOut);
+            CONFIGURATOR.connection.send(bufferOut);
         }, 250);
 
+        if (CONFIGURATOR.connection.type == ConnectionType.UDP) {
+            CONFIGURATOR.connection.isCli = true;
+        }
+
+        if (CONFIGURATOR.connection.type == ConnectionType.BLE) {
+            let delay = CONFIGURATOR.connection.deviceDescription.delay;
+            if (delay > 0) {    
+                helper.timeout.add('cli_delay', () =>  {
+                    self.send("cli_delay " +  delay + '\n', null);
+                }, 400);
+            } 
+        }
+    
         GUI.content_ready(callback);
     });
 };
@@ -442,7 +455,7 @@ TABS.cli.send = function (line, callback) {
         bufView[c_key] = line.charCodeAt(c_key);
     }
 
-    serial.send(bufferOut, callback);
+    CONFIGURATOR.connection.send(bufferOut, callback);
 };
 
 TABS.cli.cleanup = function (callback) {

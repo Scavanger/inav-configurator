@@ -21,7 +21,7 @@ function startApplication() {
         createdWindow.onClosed.addListener(function () {
             // automatically close the port when application closes
             // save connectionId in separate variable before createdWindow.contentWindow is destroyed
-            var connectionId = createdWindow.contentWindow.GUI.connection.connectionId,
+            var connectionId = createdWindow.contentWindow.CONFIGURATOR.connection.connectionId,
                 valid_connection = createdWindow.contentWindow.CONFIGURATOR.connectionValid,
                 mincommand = createdWindow.contentWindow.MISC.mincommand;
 

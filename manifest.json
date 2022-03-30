@@ -39,6 +39,7 @@
         "serial",
         "usb",
         "bluetooth",
+        "sockets",
         "storage",
         "fileSystem",
         "fileSystem.write",

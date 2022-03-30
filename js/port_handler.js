@@ -19,7 +19,7 @@ PortHandler.initialize = function () {
 PortHandler.check = function () {
     var self = this;
 
-    serial.getDevices(function(current_ports) {
+    ConnectionSerial.getDevices(function(current_ports) {
         // port got removed or initial_ports wasn't initialized yet
         if (self.array_difference(self.initial_ports, current_ports).length > 0 || !self.initial_ports) {
             var removed_ports = self.array_difference(self.initial_ports, current_ports);
@@ -72,7 +72,6 @@ PortHandler.check = function () {
                             current_ports.forEach(function(port) {
                                 if (port == result.last_used_port) {
                                     console.log('Selecting last used port: ' + result.last_used_port);
-
                                     $('#port').val(result.last_used_port);
                                 }
                             });
