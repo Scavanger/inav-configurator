@@ -37,7 +37,7 @@ jobs:
                 retry_on: error
                 command: npm install
                 timeout_minutes: 10
-            - name: build linux
+            - name: Build Linux
               run: npm run make
             - name: Upload deb
               uses: actions/upload-artifact@v3
@@ -79,8 +79,8 @@ jobs:
             node-version: 21
             check-latest: true
             cache: 'npm'
-        - name: Install packages
-          run: brew install nodejs
+        - name: Install Setuptools
+          run: pip install setuptools
         - name: Install deps
           uses: nick-fields/retry@v2
           with:
@@ -88,7 +88,7 @@ jobs:
             retry_on: error
             command: npm install
             timeout_minutes: 10
-        - name: build macos 
+        - name: Build MacOS
           run: npm run make 
         - name: Upload MacOS zip
           uses: actions/upload-artifact@v4
@@ -123,7 +123,7 @@ jobs:
                 echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
                 echo "BUILD_SUFFIX=${BUILD_SUFFIX}" >> $GITHUB_ENV
                 echo "BUILD_NAMEx64=INAV-configurator_win32_x64_${VERSION}_${BUILD_SUFFIX}" >> $GITHUB_ENV
-                echo "BUILD_NAMEis32=INAV-configurator_win32_ia32_${VERSION}_${BUILD_SUFFIX}" >> $GITHUB_ENV
+                echo "BUILD_NAMEia32=INAV-configurator_win32_ia32_${VERSION}_${BUILD_SUFFIX}" >> $GITHUB_ENV
               shell: bash
             - uses: actions/setup-node@v4
               with:
@@ -141,29 +141,29 @@ jobs:
                 retry_on: error
                 command: npm install
                 timeout_minutes: 10
-            - name: build win32 x64
+            - name: Build Win32 x64
               run: npm run make -- --arch="x64"
-            - name: build win32 ia32
+            - name: Build win32 ia32
               run: npm run make -- --arch="ia32"
             - name: Upload Windows x64 zip
               uses: actions/upload-artifact@v4
               with:
-                name: ${{env.BUILD_NAMEx64}} Windows x64 zip
+                name: ${{env.BUILD_NAMEx64}}_ZIP
                 path: ./out/make/zip/win32/x64/*.zip
             - name: Upload Windows x64 msi
               uses: actions/upload-artifact@v4
               with:
-                name: ${{env.BUILD_NAMEx64}} Windows x64 msi
+                name: ${{env.BUILD_NAMEx64}}_MSI
                 path: ./out/make/wix/x64/*.msi
             - name: Upload Windows ia32 zip
               uses: actions/upload-artifact@v4
               with:
-                name: ${{env.BUILD_NAMEia32}} Windows ia32 zip
+                name: ${{env.BUILD_NAMEia32}}_ZIP
                 path: ./out/make/zip/win32/ia32/*.zip
             - name: Upload Windows ia32 msi
               uses: actions/upload-artifact@v4
               with:
-                name: ${{env.BUILD_NAMEia32}} Windows ia32 msi
+                name: ${{env.BUILD_NAMEia32}}_MSI
                 path: ./out/make/wix/ia32/*.msi
             
 
