@@ -3,7 +3,7 @@ on: workflow_dispatch
 
 jobs:
     build-linux:
-        runs-on: unbuntu-latest
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - name: Setup environment
@@ -42,18 +42,18 @@ jobs:
             - name: Upload deb
               uses: actions/upload-artifact@v3
               with:
-                name: ${{ env.BUILD_NAME }} Linux deb
-                path: ./out/make/deb/linux/x64/*.deb
+                name: ${{ env.BUILD_NAME }}_DEB
+                path: ./out/make/deb/x64/*.deb
             - name: Upload rpm
               uses: actions/upload-artifact@v3
               with:
-                name: ${{ env.BUILD_NAME }} Linux rpm
-                path: ./out/make/rpm/linux/x64/*.rpm
+                name: ${{ env.BUILD_NAME }}_RPM
+                path: ./out/make/rpm/x64/*.rpm
             - name: Upload Linux zip
               uses: actions/upload-artifact@v3
               with:
-                name: ${{ env.BUILD_NAME }} Linux zip
-                path: ./out/make/zip/linux/x64/*.rpm
+                name: ${{ env.BUILD_NAME }}_ZIP
+                path: ./out/make/zip/linux/x64/*.zip
     build-mac:
         runs-on: macos-latest
         steps:
@@ -79,6 +79,7 @@ jobs:
             node-version: 21
             check-latest: true
             cache: 'npm'
+        # Workaround due to a bug in node-gyp: https://github.com/electron/rebuild/issues/1116
         - name: Install Setuptools
           run: pip install setuptools
         - name: Install deps
@@ -93,13 +94,13 @@ jobs:
         - name: Upload MacOS zip
           uses: actions/upload-artifact@v4
           with:
-            name: ${{env.BUILD_NAME}} MacOSX zip
+            name: ${{env.BUILD_NAME}}_ZIP
             path: ./out/make/zip/darwin/x64/*.zip
         - name: Upload MacOS dmg
           uses: actions/upload-artifact@v4
           with:
-            name: ${{env.BUILD_NAME}} MacOSX dmg
-            path: ./out/make/dmg/darwin/x64/*.dmg
+            name: ${{env.BUILD_NAME}}_DMG
+            path: ./out/make/*.dmg
     build-windows:
         runs-on: windows-latest
         steps:
