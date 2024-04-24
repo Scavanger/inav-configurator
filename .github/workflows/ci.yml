@@ -90,12 +90,12 @@ jobs:
             command: npm install
             timeout_minutes: 10
         - name: Build MacOS
-          run: npm run make -- -- arch="universal"
+          run: npm run make -- --arch="universal"
         - name: Upload MacOS zip
           uses: actions/upload-artifact@v4
           with:
             name: ${{env.BUILD_NAME}}_ZIP
-            path: ./out/make/zip/darwin/x64/*.zip
+            path: ./out/make/zip/darwin/universal/*.zip
         - name: Upload MacOS dmg
           uses: actions/upload-artifact@v4
           with:
