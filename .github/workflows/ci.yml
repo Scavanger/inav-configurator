@@ -29,7 +29,7 @@ jobs:
                 check-latest: true
                 cache: 'npm'
             - name: Install dependencies
-              run: sudo apt-get update && sudo apt-get -y install dpkg fakeroot rpmbuild build-essential libudev-dev
+              run: sudo apt-get update && sudo apt-get -y install dpkg fakeroot rpm build-essential libudev-dev
             - name: Install deps
               uses: nick-fields/retry@v2
               with:
