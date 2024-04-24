@@ -142,24 +142,24 @@ jobs:
                 command: npm install
                 timeout_minutes: 10
             - name: build win32 x64
-              run: npm run make -- -- arch="x64"
+              run: npm run make -- --arch="x64"
             - name: build win32 ia32
-              run: npm run make -- -- arch="ia32"
+              run: npm run make -- --arch="ia32"
             - name: Upload Windows x64 zip
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEx64}} Windows x64 zip
-                path: ./out/make/zip/windows/x64/*.zip
+                path: ./out/make/zip/win32/x64/*.zip
             - name: Upload Windows x64 msi
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEx64}} Windows x64 msi
-                path: ./out/make/wix/windows/x64/*.msi
+                path: ./out/make/wix/x64/*.msi
             - name: Upload Windows ia32 zip
               uses: actions/upload-artifact@v4
               with:
                 name: ${{env.BUILD_NAMEia32}} Windows ia32 zip
-                path: ./out/make/zip/windows/ia32/*.zip
+                path: ./out/make/zip/win32/ia32/*.zip
             - name: Upload Windows ia32 msi
               uses: actions/upload-artifact@v4
               with:
