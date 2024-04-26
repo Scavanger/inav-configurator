@@ -81,8 +81,8 @@ jobs:
             check-latest: true
             cache: 'npm'
         # Workaround due to a bug in node-gyp: https://github.com/electron/rebuild/issues/1116
-        - name: Install node-gyp (Workaround)
-          run: npm install node-gyp --save-dev
+        - name: Install Setuptools
+          run: python3 -m pip install --break-system-packages setuptools
         - name: Install deps
           uses: nick-fields/retry@v2
           with:
