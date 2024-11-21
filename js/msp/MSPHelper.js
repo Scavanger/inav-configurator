@@ -3182,34 +3182,38 @@ var mspHelper = (function () {
     };
 
     self.saveGeozones = function (callback) {
-        let geozoneID = -1;
-        let vertexID = -1;
-        nextGeozone()
+        
+        // Reset all zones and vertrices
+        MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE, [0xff], false, () => {
+            let geozoneID = -1;
+            let vertexID = -1;
+            nextGeozone()
 
-        function nextVertex() {
-            vertexID++;
+            function nextVertex() {
+                vertexID++;
 
-            let zone = FC.GEOZONES.at(geozoneID);
-            if (!zone || zone.getVerticesCount() == 0) {
-                nextGeozone();
-                return;
+                let zone = FC.GEOZONES.at(geozoneID);
+                if (!zone || zone.getVerticesCount() == 0) {
+                    nextGeozone();
+                    return;
+                }
+                if (vertexID < FC.GEOZONES.at(geozoneID).getVerticesCount() - 1) {
+                    MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE_VERTICE, FC.GEOZONES.extractBufferVertices(geozoneID, vertexID), false, nextVertex); 
+                } else {
+                    MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE_VERTICE, FC.GEOZONES.extractBufferVertices(geozoneID, vertexID), false, nextGeozone); 
+                }
             }
-            if (vertexID < FC.GEOZONES.at(geozoneID).getVerticesCount() - 1) {
-                MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE_VERTICE, FC.GEOZONES.extractBufferVertices(geozoneID, vertexID), false, nextVertex); 
-            } else {
-                MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE_VERTICE, FC.GEOZONES.extractBufferVertices(geozoneID, vertexID), false, nextGeozone); 
-            }
-        }
 
-        function nextGeozone() {
-            geozoneID++;
-            vertexID = -1;
-            if (geozoneID < FC.GEOZONES.getMaxZones()) {
-                MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE, FC.GEOZONES.extractBufferZone(geozoneID), false, nextVertex);
-            } else {
-                MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE, FC.GEOZONES.extractBufferZone(geozoneID), false, callback);
+            function nextGeozone() {
+                geozoneID++;
+                vertexID = -1;
+                if (geozoneID < FC.GEOZONES.getMaxZones()) {
+                    MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE, FC.GEOZONES.extractBufferZone(geozoneID), false, nextVertex);
+                } else {
+                    MSP.send_message(MSPCodes.MSP2_INAV_SET_GEOZONE, FC.GEOZONES.extractBufferZone(geozoneID), false, callback);
+                }
             }
-        }
+        });
     }
 
     self._getSetting = function (name) {
