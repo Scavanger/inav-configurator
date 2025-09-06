@@ -58,7 +58,7 @@ jobs:
                 owner: 'iNavFlight'
                 repository: 'inav'
             - name: Build Linux SITL
-              run: cd inav && mkdir -p build_SITL && cd build_SITL && cmake -DSITL=ON -DWARNINGS_AS_ERRORS=ON -G Ninja .. && ninja -j${{ env.NUM_CORES }}
+              run: mkdir -p build_SITL && cd build_SITL && cmake -DSITL=ON -DWARNINGS_AS_ERRORS=ON -G Ninja .. && ninja
             - name: Strip version number
               run: |
                 for f in build_SITL/*_SITL; do
