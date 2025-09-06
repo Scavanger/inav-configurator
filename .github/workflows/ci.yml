@@ -65,7 +65,7 @@ jobs:
                   mv $f $(echo $f | sed -e 's/_[0-9]\+\.[0-9]\+\.[0-9]\+//')
                 done
             - name: Copy SITL executable
-              run: cp ./inav/build_SITL/inav_SITL ./resources/sitl/linux/
+              run: cp inav/build_SITL/inav_SITL resources/sitl/linux/
             - name: Build Linux
               run: npm run make
             - name: Upload Linux deb
