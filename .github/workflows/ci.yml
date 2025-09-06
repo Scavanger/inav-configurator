@@ -42,14 +42,6 @@ jobs:
                 #cache: 'npm'
             - name: Install dependencies
               run: sudo apt-get update && sudo apt-get -y install dpkg fakeroot rpm build-essential libudev-dev ninja-build
-            - name: Install deps
-              uses: nick-fields/retry@v3
-              with:
-                max_attempts: 3
-                retry_on: error
-                command: npm install --foreground-scripts
-                timeout_minutes: 10
-                on_retry_command: rm -rfv node_modules
             - name: Clone INAV repro for SITL Build
               uses: GuillaumeFalourd/clone-github-repo-action@v2.3
               with:
@@ -66,6 +58,16 @@ jobs:
                 done
             - name: Copy SITL executable
               run: cp inav/build_SITL/inav_SITL resources/sitl/linux/
+            - name: Test dir
+              run: ls -l && cd inav-configurator && ls -l  
+            - name: Install deps
+              uses: nick-fields/retry@v3
+              with:
+                max_attempts: 3
+                retry_on: error
+                command: npm install --foreground-scripts
+                timeout_minutes: 10
+                on_retry_command: rm -rfv node_modules
             - name: Build Linux
               run: npm run make
             - name: Upload Linux deb
