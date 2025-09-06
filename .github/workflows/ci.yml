@@ -58,10 +58,10 @@ jobs:
                 owner: 'iNavFlight'
                 repository: 'inav'
             - name: Build Linux SITL
-              run: mkdir -p build_SITL && cd build_SITL && cmake -DSITL=ON -DWARNINGS_AS_ERRORS=ON -G Ninja .. && ninja
+              run: cd inav && mkdir -p build_SITL && cd build_SITL && cmake -DSITL=ON -DWARNINGS_AS_ERRORS=ON -G Ninja .. && ninja
             - name: Strip version number
               run: |
-                for f in build_SITL/*_SITL; do
+                for f in inav/build_SITL/*_SITL; do
                   mv $f $(echo $f | sed -e 's/_[0-9]\+\.[0-9]\+\.[0-9]\+//')
                 done
             - name: Copy SITL executable
