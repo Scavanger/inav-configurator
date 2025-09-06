@@ -4,7 +4,7 @@ name: Build Configurator
 # a CI build submit a draft PR.
 on: 
   pull_request:
-
+  workflow_dispatch:
   workflow_call:
     #inputs:
     #  release_build:
@@ -41,7 +41,7 @@ jobs:
                 #check-latest: true
                 #cache: 'npm'
             - name: Install dependencies
-              run: sudo apt-get update && sudo apt-get -y install dpkg fakeroot rpm build-essential libudev-dev
+              run: sudo apt-get update && sudo apt-get -y install dpkg fakeroot rpm build-essential libudev-dev ninja-build
             - name: Install deps
               uses: nick-fields/retry@v3
               with:
@@ -50,8 +50,22 @@ jobs:
                 command: npm install --foreground-scripts
                 timeout_minutes: 10
                 on_retry_command: rm -rfv node_modules
-            - name: Remove other SITL binary
-              run: rm -v resources/sitl/linux/arm64/inav_SITL
+            - name: Clone INAV repro for SITL Build
+              uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+              with:
+                depth: 1
+                branch: 'master'
+                owner: 'iNavFlight'
+                repository: 'inav'
+            - name: Build Linux SITL
+              run: cd inav && mkdir -p build_SITL && cd build_SITL && cmake -DSITL=ON -DWARNINGS_AS_ERRORS=ON -G Ninja .. && ninja -j${{ env.NUM_CORES }}
+            - name: Strip version number
+              run: |
+                for f in build_SITL/*_SITL; do
+                  mv $f $(echo $f | sed -e 's/_[0-9]\+\.[0-9]\+\.[0-9]\+//')
+                done
+            - name: Copy SITL executable
+              run: cp ./inav/build_SITL/inav_SITL ./resources/sitl/linux/
             - name: Build Linux
               run: npm run make
             - name: Upload Linux deb
