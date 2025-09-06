@@ -56,10 +56,8 @@ jobs:
                 for f in inav/build_SITL/*_SITL; do
                   mv $f $(echo $f | sed -e 's/_[0-9]\+\.[0-9]\+\.[0-9]\+//')
                 done
-            - name: Test dir
-              run: ls -l && cd inav-configurator && ls -l
             - name: Copy SITL executable
-              run: cp inav/build_SITL/inav_SITL resources/sitl/linux/  
+              run: mkdir resources/sitl/linux && cp inav/build_SITL/inav_SITL resources/sitl/linux/
             - name: Install deps
               uses: nick-fields/retry@v3
               with:
