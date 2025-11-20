@@ -57,7 +57,7 @@ jobs:
                 repository: iNavFlight/inav-nightly
                 latest: true
                 preRelease: true
-                fileName: sitl_resources.zip
+                fileName: sitl-resources.zip
                 out-file-path: 'sitl_resources'
                 extract: true
             - name: Copy SITL binaries
