@@ -244,6 +244,19 @@ jobs:
             command: yarn install --foreground-scripts
             timeout_minutes: 10
             on_retry_command: rm -rfv node_modules
+        - name: Get SITL binaries
+          uses: robinraju/release-downloader@v1
+          with:
+            repository: iNavFlight/inav-nightly
+            latest: true
+            preRelease: true
+            fileName: sitl-resources.zip
+            out-file-path: 'sitl_resources'
+            extract: true
+        - name: Copy SITL binaries
+          run: |
+            mkdir resources/public/sitl
+            cp sitl_resources/resources/sitl/macos/inav_SITL resources/public/sitl/
         - name: Build MacOS x64
           run: yarn run make -- --arch="x64"
         - name: Upload MacOS x64 zip
