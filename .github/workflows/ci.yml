@@ -117,6 +117,19 @@ jobs:
                 command: yarn install
                 timeout_minutes: 10
                 on_retry_command: rm -rfv node_modules
+            - name: Get SITL binaries
+              uses: robinraju/release-downloader@v1
+              with:
+                repository: iNavFlight/inav-nightly
+                latest: true
+                preRelease: true
+                fileName: sitl-resources.zip
+                out-file-path: 'sitl_resources'
+                extract: true
+            - name: Copy SITL binaries
+              run: |
+                mkdir resources/public/sitl
+                cp sitl_resources/resources/sitl/linux/arm64/inav_SITL resources/public/sitl/
             - name: Build Linux
               run: yarn run make -- --arch="arm64"
             - name: Upload Linux deb
@@ -170,6 +183,19 @@ jobs:
             command: yarn install --foreground-scripts
             timeout_minutes: 10
             on_retry_command: rm -rfv node_modules
+        - name: Get SITL binaries
+          uses: robinraju/release-downloader@v1
+          with:
+            repository: iNavFlight/inav-nightly
+            latest: true
+            preRelease: true
+            fileName: sitl-resources.zip
+            out-file-path: 'sitl_resources'
+            extract: true
+        - name: Copy SITL binaries
+          run: |
+            mkdir resources/public/sitl
+            cp sitl_resources/resources/sitl/macos/inav_SITL resources/public/sitl/
         - name: Build MacOS arm64
           run: yarn run make -- --arch="arm64"
         - name: Upload MacOS arm64 zip
@@ -271,6 +297,20 @@ jobs:
                 command: yarn install --foreground-scripts
                 timeout_minutes: 10
                 on_retry_command: rm -rfv node_modules
+            - name: Get SITL binaries
+              uses: robinraju/release-downloader@v1
+              with:
+                repository: iNavFlight/inav-nightly
+                latest: true
+                preRelease: true
+                fileName: sitl-resources.zip
+                out-file-path: 'sitl_resources'
+                extract: true
+            - name: Copy SITL binaries
+              run: |
+                mkdir resources\public\sitl
+                cp assets\windows\cygwin1.dll  resources\public\sitl\ 
+                cp sitl_resources\resources\sitl\windows\inav_SITL.exe resources\public\sitl\
             - name: Build Win x64
               run: yarn run make -- --arch="x64"
             - name: Upload Windows x64 zip
