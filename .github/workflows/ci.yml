@@ -62,7 +62,7 @@ jobs:
                 extract: true
             - name: Copy SITL binaries
               run: |
-                cp sitl_resources/resources/sitl/linux/inav_SITL ./resources/public/sitl/inav_SITL
+                cp sitl_resources/resources/sitl/linux/inav_SITL resources/public/sitl/
             - name: Build Linux
               run: yarn run make
             - name: Upload Linux deb
