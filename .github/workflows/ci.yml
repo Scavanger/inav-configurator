@@ -49,6 +49,18 @@ jobs:
                 command: yarn install
                 timeout_minutes: 10
                 on_retry_command: rm -rfv node_modules
+            - name: Get SITL binaries
+              uses: robinraju/release-downloader@v1
+              with:
+                repository: iNavFlight/inav-nightly
+                tag: latest
+                preRelease: true
+                fileName: sitl_resources.zip
+                out-file-path: 'sitl_resources'
+                extract: true
+            - name: Copy SITL binaries
+              run: |
+                cp sitl_resources/resources/sitl/linux/inav_SITL ./resources/public/sitl/inav_SITL
             - name: Build Linux
               run: yarn run make
             - name: Upload Linux deb

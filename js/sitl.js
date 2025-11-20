@@ -112,26 +112,16 @@ var SITLProcess = {
         var sitlExePath, eepromPath;
         var path = window.electronAPI.appGetPath('userData');
         if (GUI.operating_system == 'Windows') {
-            sitlExePath = '/windows/inav_SITL.exe';
+            sitlExePath = '/inav_SITL.exe';
             eepromPath = `${path}\\${eepromFileName}`
-        } else if (GUI.operating_system == 'Linux') {
-            sitlExePath = '/linux/inav_SITL';
-            eepromPath = `${path}/${eepromFileName}`
-            window.electronAPI.chmod(sitlExePath, 0o755).then(err => {
-                if (err)
-                    console.log(err);
-            });
-        } else if (GUI.operating_system == 'MacOS') {
-            sitlExePath = '/macos/inav_SITL';
-            eepromPath = `${path}/${eepromFileName}`
-            window.electronAPI.chmod(sitlExePath, 0o755).then(err => {
-                if (err)
-                    console.log(err);
-            });
- 
         } else {
-            return;
-        }
+            sitlExePath = '/inav_SITL';
+            eepromPath = `${path}/${eepromFileName}`
+            window.electronAPI.chmod(sitlExePath, 0o755).then(err => {
+                if (err)
+                    console.log(err);
+            });
+        } 
 
         var args = [];
         args.push(`--path=${eepromPath}`);
