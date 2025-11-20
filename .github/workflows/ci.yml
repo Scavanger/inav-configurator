@@ -55,7 +55,7 @@ jobs:
               uses: robinraju/release-downloader@v1
               with:
                 repository: iNavFlight/inav-nightly
-                tag: latest
+                latest: true
                 preRelease: true
                 fileName: sitl_resources.zip
                 out-file-path: 'sitl_resources'
