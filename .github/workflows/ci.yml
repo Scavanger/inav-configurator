@@ -62,6 +62,7 @@ jobs:
                 extract: true
             - name: Copy SITL binaries
               run: |
+                mkdir resources/public/sitl
                 cp sitl_resources/resources/sitl/linux/inav_SITL resources/public/sitl/
             - name: Build Linux
               run: yarn run make
