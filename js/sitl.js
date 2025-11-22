@@ -205,4 +205,11 @@ var SITLProcess = {
     }
 };
 
-export { SITLProcess, SitlSerialPortUtils };
+var sitlBinaries = {
+    getLocalBinaries: function() {
+        var binaries = [];
+        var path = window.electronAPI.appGetPath('userData');
+    }
+};
+
+export { SITLProcess, SitlSerialPortUtils, sitlBinaries };
