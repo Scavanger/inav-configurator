@@ -69,6 +69,11 @@ jobs:
               with:
                 name: ${{ env.BUILD_NAME }}_ZIP
                 path: ./out/make/zip/linux/x64/*.zip
+            - name: Upload Linux flatpak
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ env.BUILD_NAME }}_ZIP
+                path: ./out/make/flatpak/x86_64/*.flatpak
 
     build-linux-aarch64:
         runs-on: ubuntu-24.04-arm
@@ -127,8 +132,8 @@ jobs:
             - name: Upload Linux flatpak
               uses: actions/upload-artifact@v4
               with:
-                name: ${{ env.BUILD_NAME }}_ZIP
-                path: ./out/make/zip/linux/x64/*.flatpak
+                name: ${{ env.BUILD_NAME }}_FLATPAK
+                path: ./out/make/flatpak/aarch64/*.flatpak
 
     build-mac-arm64:
         runs-on: macos-15
@@ -177,12 +182,6 @@ jobs:
           with:
             name: ${{env.BUILD_NAMEarm64}}_DMG
             path: ./out/make/*arm64*.dmg
-        - name: Upload Linux flatpak
-          uses: actions/upload-artifact@v4
-          with:
-            name: ${{ env.BUILD_NAME }}_ZIP
-            path: ./out/make/zip/linux/x64/*.flatpak
-
     build-mac:
         runs-on: macos-15-intel
         steps:
