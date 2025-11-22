@@ -146,6 +146,18 @@ export default {
           icon: "./assets/linux/icon/inav_icon_128.png",
           description: "Configurator for the open source flight controller software INAV.",
           homepage: "https://github.com/inavflight/",
+          modules: [
+            {
+              name: "zypak",
+              sources: [
+                {
+                  type: "git",
+                  url: "https://github.com/refi64/zypak",
+                  tag: "v2024.01.17",
+                },
+              ],
+            }
+          ]
         }
       },
     },
