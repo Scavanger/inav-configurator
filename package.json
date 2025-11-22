@@ -54,6 +54,7 @@
     "@electron-forge/maker-rpm": "^7.8.3",
     "@electron-forge/maker-wix": "^7.8.3",
     "@electron-forge/maker-zip": "^7.8.3",
+    "@electron-forge/maker-flatpak": "^7.8.3",
     "@electron-forge/plugin-auto-unpack-natives": "7.8.3",
     "@electron-forge/plugin-vite": "^7.8.3",
     "@rollup/plugin-inject": "^5.0.5",
