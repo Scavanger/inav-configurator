@@ -4,6 +4,7 @@ name: Build Configurator
 # a CI build submit a draft PR.
 on: 
   pull_request:
+  workflow_dispatch:
 
   workflow_call:
     #inputs:
