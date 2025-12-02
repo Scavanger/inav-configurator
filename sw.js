@@ -82,7 +82,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "402b66900e731ca748771b6fc5e7a068"
   }, {
     "url": "index.html",
-    "revision": "461c939272668082d02895705d951c71"
+    "revision": "24b666f030bea49e6e5479c0b387667a"
   }, {
     "url": "tabs/sitl.js",
     "revision": "c5eb24ad38ee7c8d8268e53b169cfae2"
@@ -103,7 +103,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "6c129038ce26bc0e0b269f9ee1e0b531"
   }, {
     "url": "tabs/search.js",
-    "revision": "afcc9c1fa90d8ecad3478ff0a2518f33"
+    "revision": "9f09aaf42721dd327111b8baffb9f626"
   }, {
     "url": "tabs/search.html",
     "revision": "5193fde5f2f2d875bb0f84909ad90326"
@@ -115,7 +115,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "918274aba6dd44442f437a46cad408c7"
   }, {
     "url": "tabs/receiver.js",
-    "revision": "f6e91543bb777cec4cd1f49b7639e948"
+    "revision": "5c7658b6898716e224b6ba32ef0e8b40"
   }, {
     "url": "tabs/receiver.html",
     "revision": "6cf33840acd267f1da2895ab8d812447"
@@ -124,10 +124,10 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "e9fd13de40c89e207fd38a6d8fe90b06"
   }, {
     "url": "tabs/programming.html",
-    "revision": "90080abd61d1926006cf706b500a2344"
+    "revision": "3c75e2192f07e91d8e5cc7b1193d9165"
   }, {
     "url": "tabs/ports.js",
-    "revision": "ce5da5e5b08ca445bf008436600f3efe"
+    "revision": "10fc8c050a405c0ce7d884498077ca9f"
   }, {
     "url": "tabs/ports.html",
     "revision": "f6757b7e35e903b257694617909e66f2"
@@ -145,16 +145,16 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "855c56eb31a2e08f81b10bb43f874585"
   }, {
     "url": "tabs/osd.js",
-    "revision": "3eb0b721de001fa8fe4809d68dc21f25"
+    "revision": "3772c56727afdc81a9c121b9604e09e3"
   }, {
     "url": "tabs/osd.html",
     "revision": "6809902b6132a48c4d795c4efb92bcc9"
   }, {
     "url": "tabs/options.html",
-    "revision": "faf40ff1af61faf6f425bfb4918d5364"
+    "revision": "d2e89b8eb79ab41a7c72de8aabd40bcd"
   }, {
     "url": "tabs/onboard_logging.js",
-    "revision": "fddd7c2d7257503049fbba6874192452"
+    "revision": "bc7b968a42d3d3d6ebf16230f04b0f1b"
   }, {
     "url": "tabs/onboard_logging.html",
     "revision": "5c55b65726b0bfdd294814a27b49c088"
@@ -166,19 +166,19 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "ec55182b0c91ac42dedd55769d77277d"
   }, {
     "url": "tabs/mission_control.js",
-    "revision": "8ebd9ae7d469b3cc3e3e1c878a49db94"
+    "revision": "e9751ec52475b55c29bffb351b73ff11"
   }, {
     "url": "tabs/mission_control.html",
     "revision": "d41978c7598096d76830b67870ecded0"
   }, {
     "url": "tabs/magnetometer.js",
-    "revision": "b4ab787b23605f761b4128b5c7b3b419"
+    "revision": "1762394aba8a53a9b97c1cc5dafc05d1"
   }, {
     "url": "tabs/magnetometer.html",
     "revision": "e7a171b389909925f14c1f91194fbb43"
   }, {
     "url": "tabs/logging.js",
-    "revision": "fd48b0ba1e25f97bc9c8b7b18e744ffe"
+    "revision": "64c5f971368252ada8daebf615c5ffba"
   }, {
     "url": "tabs/logging.html",
     "revision": "600101b6280bd8c10ea024444964a529"
@@ -195,6 +195,12 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "tabs/landing.html",
     "revision": "913e6aafe3ec6b2d3f5b54c29f422da7"
   }, {
+    "url": "tabs/javascript_programming.js",
+    "revision": "197efdee8288d2618d61c4eaeae1b810"
+  }, {
+    "url": "tabs/javascript_programming.html",
+    "revision": "92108ff55f794d539a147e736184c55e"
+  }, {
     "url": "tabs/gps.js",
     "revision": "8d9941a2da324c376b7cf19f0e673725"
   }, {
@@ -202,7 +208,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "4a79d13a7b01babbb4bbab1bb26e2e3e"
   }, {
     "url": "tabs/firmware_flasher.js",
-    "revision": "d2236d64a8fc77e79d43ef5269a1058a"
+    "revision": "dae218af019cdf221922d56497288518"
   }, {
     "url": "tabs/firmware_flasher.html",
     "revision": "61cfc7388783fb396c604f430f1b1d21"
@@ -223,7 +229,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "revision": "dc553e6380668bbe3b8fe71f1f049531"
   }, {
     "url": "tabs/cli.js",
-    "revision": "6b7eabb9ce6e7dade585e94c49f2c551"
+    "revision": "a04c889b0038d0128d7975e000f725ee"
   }, {
     "url": "tabs/cli.html",
     "revision": "781ac26b03a5d9ab72aa5ad26be13b48"
@@ -264,7 +270,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/y4-D6SJU9OJ.js",
     "revision": null
   }, {
-    "url": "assets/wNumb-DZfnXen2.js",
+    "url": "assets/wNumb-CUX1l8G0.js",
     "revision": null
   }, {
     "url": "assets/vtail_quad_reverse-COoKWac3.js",
@@ -282,10 +288,10 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/tri-BrQHbqv6.js",
     "revision": null
   }, {
-    "url": "assets/TileWMS-Ojl1fCoy.js",
+    "url": "assets/TileWMS-CFPX8T4t.js",
     "revision": null
   }, {
-    "url": "assets/tabs-DhSV9wpC.js",
+    "url": "assets/tabs-BExK3xOZ.js",
     "revision": null
   }, {
     "url": "assets/step-receiver-D1xqO9i1.js",
@@ -309,28 +315,34 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/sitl-_pVPVpbM.js",
     "revision": null
   }, {
-    "url": "assets/sitl-BUwZdc8L.css",
+    "url": "assets/sitl-DflBM7Uf.css",
     "revision": null
   }, {
-    "url": "assets/sitl-B0iKDKwy.js",
+    "url": "assets/sitl-CaYBr_vJ.js",
     "revision": null
   }, {
     "url": "assets/setup-ChqjgBJt.js",
     "revision": null
   }, {
-    "url": "assets/setup-BmKLen32.js",
+    "url": "assets/setup-BQ_hZMGp.js",
     "revision": null
   }, {
-    "url": "assets/sensors-CL39U9Xk.js",
+    "url": "assets/sensors-D3VpKKZN.js",
     "revision": null
   }, {
     "url": "assets/sensors-BE9a8Vpg.js",
     "revision": null
   }, {
+    "url": "assets/search-C5PCoZ1a.js",
+    "revision": null
+  }, {
+    "url": "assets/search-BuCr5PjZ.js",
+    "revision": null
+  }, {
     "url": "assets/receiver-oOWuaj9Y.js",
     "revision": null
   }, {
-    "url": "assets/receiver-BrHJepIG.js",
+    "url": "assets/receiver-Bkdf7QPF.js",
     "revision": null
   }, {
     "url": "assets/quad_x_reverse-Dtn7A2Eb.js",
@@ -345,40 +357,40 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/quad_p-gOsh_DpQ.js",
     "revision": null
   }, {
-    "url": "assets/programming-DQCd9a_D.js",
+    "url": "assets/programming-CwNyPqef.js",
     "revision": null
   }, {
-    "url": "assets/programming-BhXGSUCc.js",
+    "url": "assets/programming-B2tOIa-p.js",
+    "revision": null
+  }, {
+    "url": "assets/ports-C_F4abBf.js",
     "revision": null
   }, {
     "url": "assets/ports-BnXMIsld.js",
     "revision": null
   }, {
-    "url": "assets/ports-BCvM6Y27.js",
-    "revision": null
-  }, {
     "url": "assets/pid_tuning-CbG6rXlV.js",
     "revision": null
   }, {
-    "url": "assets/pid_tuning-4BX57_Ar.js",
+    "url": "assets/pid_tuning-BqaWscIO.js",
+    "revision": null
+  }, {
+    "url": "assets/outputs-x6OGPv4D.js",
     "revision": null
   }, {
     "url": "assets/outputs-CoC-00Yu.js",
     "revision": null
   }, {
-    "url": "assets/outputs-B-_PEgUr.js",
-    "revision": null
-  }, {
-    "url": "assets/osd-CknEX7tZ.js",
+    "url": "assets/osd-DpijP6Jh.js",
     "revision": null
   }, {
     "url": "assets/osd-CHg8cuKe.js",
     "revision": null
   }, {
-    "url": "assets/options-BkBdk79a.js",
+    "url": "assets/options-BC6IkKCD.js",
     "revision": null
   }, {
-    "url": "assets/onboard_logging-OsoR550g.js",
+    "url": "assets/onboard_logging-C6IkDONH.js",
     "revision": null
   }, {
     "url": "assets/onboard_logging-B7ZMh_6k.js",
@@ -534,16 +546,16 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/model_ak8963c-BUeXi2rk.js",
     "revision": null
   }, {
-    "url": "assets/mixer-QoMR9wb_.js",
+    "url": "assets/mixer-CD_h14sH.js",
     "revision": null
   }, {
     "url": "assets/mixer-BKszUAYN.js",
     "revision": null
   }, {
-    "url": "assets/mission_control-BRxfrk6N.js",
+    "url": "assets/mission_control-szU-xrNt.js",
     "revision": null
   }, {
-    "url": "assets/messages-uznDVuH9.js",
+    "url": "assets/messages-DNBA6uO-.js",
     "revision": null
   }, {
     "url": "assets/messages-CBhabLz1.js",
@@ -558,16 +570,16 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/magnetometer-CKkJYhc8.js",
     "revision": null
   }, {
-    "url": "assets/magnetometer-CB5SfWPU.js",
+    "url": "assets/magnetometer-Cci-CAuZ.js",
     "revision": null
   }, {
-    "url": "assets/logging-qU-GVW9R.js",
+    "url": "assets/logging-L1AnuNHv.js",
     "revision": null
   }, {
     "url": "assets/logging-CQjfJx1o.js",
     "revision": null
   }, {
-    "url": "assets/led_strip-C_TZC1eX.js",
+    "url": "assets/led_strip-CWxguvIE.js",
     "revision": null
   }, {
     "url": "assets/led_strip-Ct4GaZn4.js",
@@ -576,16 +588,19 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/large-C_-utXbK.js",
     "revision": null
   }, {
+    "url": "assets/landing-C_b5rsL8.js",
+    "revision": null
+  }, {
     "url": "assets/landing-B_YkJ40g.js",
     "revision": null
   }, {
-    "url": "assets/landing-Bdc5MRDT.js",
+    "url": "assets/javascript_programming-CgtnFwSW.js",
     "revision": null
   }, {
-    "url": "assets/index-CqZOi8v1.css",
+    "url": "assets/index-JsZwuVJx.js",
     "revision": null
   }, {
-    "url": "assets/index--BqaKNiR.js",
+    "url": "assets/index-Bk0WX6Mh.css",
     "revision": null
   }, {
     "url": "assets/impact_mini-DJtpZKTl.js",
@@ -609,13 +624,13 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/hex_p-CptrH0bt.js",
     "revision": null
   }, {
-    "url": "assets/gps-fNy5jIKg.js",
+    "url": "assets/gps-CpDDY6A5.js",
     "revision": null
   }, {
     "url": "assets/gps-B97XKgrq.js",
     "revision": null
   }, {
-    "url": "assets/GLTFLoader-CfIe5j7H.js",
+    "url": "assets/GLTFLoader-7_5OPEsb.js",
     "revision": null
   }, {
     "url": "assets/flying_wing-SBU5JtwR.js",
@@ -672,16 +687,16 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/firmware_flasher-TzGugGoE.js",
     "revision": null
   }, {
-    "url": "assets/firmware_flasher-DpJR31Vt.js",
+    "url": "assets/firmware_flasher-4IiE_n23.js",
     "revision": null
   }, {
     "url": "assets/failsafe-k1OTxVVh.js",
     "revision": null
   }, {
-    "url": "assets/failsafe-C2zY5veH.js",
+    "url": "assets/failsafe-DvSbsqi3.js",
     "revision": null
   }, {
-    "url": "assets/dialog-CY10jn-b.js",
+    "url": "assets/dialog-CbRtEGKB.js",
     "revision": null
   }, {
     "url": "assets/default-DD6jfuLp.js",
@@ -693,13 +708,13 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/configuration-CY4H0RHX.js",
     "revision": null
   }, {
-    "url": "assets/configuration-Cab0Ho4x.js",
+    "url": "assets/configuration-C11Lr2OY.js",
     "revision": null
   }, {
     "url": "assets/cli-ioRakTtb.js",
     "revision": null
   }, {
-    "url": "assets/cli-BfhwZP_O.js",
+    "url": "assets/cli-BooVRaA2.js",
     "revision": null
   }, {
     "url": "assets/clarity_medium-BwblFGi5.js",
@@ -783,7 +798,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/calibration-ge0y_L8V.js",
     "revision": null
   }, {
-    "url": "assets/calibration-DYHP_ROc.js",
+    "url": "assets/calibration-DhcuYPvw.js",
     "revision": null
   }, {
     "url": "assets/bold-DxZLzY9A.js",
@@ -795,10 +810,10 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/bicopter-D5HN33O8.js",
     "revision": null
   }, {
-    "url": "assets/auxiliary-fii5PAup.js",
+    "url": "assets/auxiliary-SEMPRNQ-.js",
     "revision": null
   }, {
-    "url": "assets/auxiliary-D5bZf6Sm.js",
+    "url": "assets/auxiliary-fii5PAup.js",
     "revision": null
   }, {
     "url": "assets/atail_quad_reverse-Cq8q7MI2.js",
@@ -819,10 +834,10 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/airplane-C-DS9K0B.js",
     "revision": null
   }, {
-    "url": "assets/advanced_tuning-sluEtsPe.js",
+    "url": "assets/advanced_tuning-DCl3n3dL.js",
     "revision": null
   }, {
-    "url": "assets/advanced_tuning-DCl3n3dL.js",
+    "url": "assets/advanced_tuning-BdRsskGv.js",
     "revision": null
   }, {
     "url": "assets/adsb_9-Cb3621I0.js",
@@ -870,7 +885,7 @@ define(['./workbox-5a5d9309'], (function (workbox) { 'use strict';
     "url": "assets/adsb_1-Ceu8j1um.js",
     "revision": null
   }, {
-    "url": "assets/adjustments-C_IpigJL.js",
+    "url": "assets/adjustments-DTuVu5JF.js",
     "revision": null
   }, {
     "url": "assets/adjustments-BZgG2hx-.js",
