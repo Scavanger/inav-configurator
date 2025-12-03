@@ -1,37 +1,22 @@
-# OSD Font Files
+# INAV HD fonts
 
-This directory contains one directory per font. In each
-directory, each character is named `%d%d%d.png`, where
-the digits represent the decimal character number found
-in the filename without the extension. All characters
-must be in the `default` font directory. If characters 
-missing from alternate font directories, the default 
-version of the character will be used.
+These font character images are for use with HD FPV systems. These are the master images for editing, adding new symbols, or deriving alternate fonts from. Use the [HD OSD Font Tool](https://github.com/MrD-RC/hdosd-font-tool) to compile these font character images in to specific files, for use with HD FPV video system.
 
-Don't alter the `.mcm` files directly, those should be
-only modified by altering the `.png` files found in its
-correspondant font directory.
+## Use
+This is the **font root** directory. The __default__ subdirectory contains the default INAV HD fonts. This is where new symbols should be added, and the default font maintained. Within __default__ there are three subdirectories:
+- 12x18
+- 24x36
+- 36x54
 
-Character map files (`.mcm`) are built from the `.png` files
-in each directory representing the font, using
-[max7456toool](https://github.com/fiam/max7456tool).
+The naming of these subdirectories indicate the pixel size per character of the images contained within. This directory structure must be adhered to within new fonts. The default font should not be renamed, and should always contain all font symbols required for the master release of INAV.
 
-After changing any source `.png` files, run:
+**12x18 was** was requested by Walksnail. But does not appear to be used.
+**24x36** is used by Avatar and HDZero.
+**36x54** is used by Avatar and WTF OS.
 
-```sh
-max7456tool -f generate fonts.yaml
-```
+### Creating a new font
+Create a new directory within this `digital` **font root** directory. Give it the name of your font. Inside your font's directory, create the directory structure for the font sizes you wish to modify, shown above. You do not need to create all directories. If you only create one, I would recommend the `36x54` images directory. 
 
-to update the `.mcm` files.
+When you create your images, you only need to include those that you wish to change. Missing images will be pulled from the default font. All images must be PNG files with transparency (RGBA). Avatar and WTF OS use the Alpha channel for transparency in the OSD. HDZero uses an RGB(127, 127, 127) grey background. But this is added automatically by the tool. Therefore, only create characters with Alpha transparency, as they can be used on all three systems.
 
-Note that `.mcm` files MUST be manually regenerated with
-the aforementioned command, added and committed to the
-repo, while preview `.png` files (the ones contained directly
-in this directory, not the ones in the source subdirectories)
-MUST NOT, they're generated only for convenience to quickly
-review fonts at a glance (.gitignore is set up to ignore them
-to help avoid mistakes).
-
-To add a new font, create its directory with source `.png` files,
-add it to the list in `fonts.yaml` and rerun `max7456tool` to
-regenerate the `.mcm`.
+Once you have created your images. Use the HD OSD Font Tool to generate the images files used by your chosen firmware.
