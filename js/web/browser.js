@@ -23,7 +23,7 @@ const browser = {
             onOfflineReady() {
                 console.log('The application is ready to work offline.');
                 GUI.log(i18n.getMessage('pwaOfflineReadyMessage'));
-                
+
             }
         });
     },

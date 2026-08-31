@@ -210,12 +210,99 @@ if (WASMModule) {
 - **i18next** via `data-i18n` attributes: `<span data-i18n="key"></span>`
 - **ES6 modules** throughout (`import`/`export`)
 
+## CSS Best Practices
+
+**Core Principle: Let the Browser Do Its Job of Handling Sizes**
+
+Adding CSS to force specific sizes consistently causes problems. Removing that CSS and letting the browser calculate natural dimensions consistently produces better results.
+
+### ❌ Don't Do This
+
+```css
+/* Don't force widths on containers */
+.controls { width: 285px; }
+
+/* Don't force button widths */
+.button { width: 49%; }
+
+/* Especially Don't use pixels for font sizes! */
+.text { font-size: 16px; }
+```
+
+**Problems caused:**
+- Fixed widths create cramped layouts, overlaps, and wasted space
+- Forced button widths look unnatural
+- Pixel font sizes don't scale across different display densities (200 DPI vs 800 DPI)
+- Breaks user font size preferences and accessibility
+
+### ✅ Do This Instead
+
+```css
+/* Let containers size naturally */
+.controls { width: fit-content; }
+/* Or just don't set width at all */
+
+/* Let buttons size based on content */
+/* Don't set width on buttons */
+
+/* Use relative units for fonts */
+.text { font-size: 1.2em; }
+/* Or don't set font-size and use defaults */
+```
+
+**Results:**
+- Layouts adapt naturally to content
+- Elements look properly proportioned
+- Text scales correctly across devices
+- Respects user preferences
+
+### The Pattern to Recognize
+
+If you're writing CSS to force dimensions and encountering layout problems:
+
+1. **Stop adding more CSS** to "fix" it
+2. **Remove the size constraints** causing the problem
+3. **Let the browser calculate** natural dimensions
+4. **Only add back** minimal constraints if absolutely required
+
+**Most of the time, removing CSS produces better results than adding more CSS.**
+
+### When to Set Sizes
+
+Only force sizes when there's a genuine need:
+- Images/icons requiring exact dimensions
+- `max-width` for text readability (e.g., `max-width: 80ch`)
+- Specific design requirements (but question if they're necessary)
+
+Use modern layout tools:
+- **Flexbox** for flexible layouts with `gap`, `justify-content`, `align-items`
+- **Grid** for two-dimensional layouts with `grid-template-columns`, `gap`
+- **fit-content**, **auto**, **%** instead of fixed pixels
+
+### Real Examples from LED Strip Redesign (2026-01-28)
+
+All three of these problems were fixed by **removing CSS**, not adding more:
+
+1. `.controls { width: 285px; }` → cramped step progress bar → **removed width rule**
+2. `.button { width: 49%; }` → unnaturally wide buttons → **removed width rule**
+3. `.step { font-size: 16px; }` → doesn't scale → **changed to font-size: 1.5em**
+
 ## Debugging
 
 ```bash
 NODE_ENV=development yarn start   # Dev mode (Electron)
 # Press Ctrl+Shift+I for DevTools
 ```
+
+For CDP-based automated testing (e.g. chrome-devtools MCP tools) or when you need to confirm the dev-mode process actually launched (a backgrounded `yarn start`/`electron-forge start` isn't always observable via `ps`/`pgrep`), run with an explicit remote-debugging port:
+
+```bash
+ENABLE_REMOTE_DEBUGGING=1 NODE_ENV=development npx electron-forge start -- --remote-debugging-port=9222
+```
+
+Then connect to `localhost:9222`. The same `--remote-debugging-port=9222` flag also works against a packaged build (`out/*/inav-configurator --remote-debugging-port=9222`) — useful since dev mode (Vite dev server) and a packaged build (`electron-forge package`, Rollup-bundled) can diverge on bundling-specific bugs that won't reproduce in dev mode.
+
+**Gotcha:** `electron-forge start` reads stdin as a readline prompt (`Type rs to restart`). Backgrounding it in a shell where stdin is `/dev/null` (e.g. `cmd &` or `nohup`) hits EOF immediately and kills the whole process tree before Vite/Electron finish loading. Keep stdin open but silent, e.g. `electron-forge start < <(sleep 600) &`.
 
 ---
 
